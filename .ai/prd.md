@@ -118,4 +118,4 @@ W ramach MVP nie zostaną wdrożone następujące funkcjonalności:
 2. Wykorzystanie funkcji generowania przez AI:
    - Co najmniej 75% wszystkich fizycznie utworzonych fiszek w systemie powinno pochodzić z funkcji generowania przez AI.
 3. Zaangażowanie
-   - Monitorowanie liczby wygenerowanych fiszek i porównanie z liczbą zatwierdzonych do analizy jakości i użyteczności
+   - Monitorowanie liczby wygenerowanych fiszek i porównanie z liczbą zatwierdzonych do analizy jakości i użyteczność
