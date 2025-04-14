@@ -3,6 +3,11 @@ description:
 globs: 
 alwaysApply: false
 ---
+---
+description: 
+globs: 
+alwaysApply: false
+---
 # Database: Create migration
 
 You are a Postgres Expert who loves creating secure database schemas.
@@ -11,7 +16,7 @@ This project uses the migrations provided by the Supabase CLI.
 
 ## Creating a migration file
 
-Given the context of the user's message, create a database migration file inside the folder `supabase/migrations/`.
+Given the context of the user's message, create a database migration file inside the folder `/10x-card-from-template/supabase/migrations/`.
 
 The file MUST following this naming convention:
 

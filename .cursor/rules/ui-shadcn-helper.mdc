@@ -3,13 +3,18 @@ description:
 globs: 
 alwaysApply: false
 ---
+---
+description: 
+globs: 
+alwaysApply: false
+---
 # Shadcn UI Components
 
 Ten projekt wykorzystuje @shadcn/ui dla komponentów interfejsu użytkownika. Są to pięknie zaprojektowane, dostępne komponenty, które można dostosować do swojej aplikacji.
 
 ## Odszukiwanie zainstalowanych komponentów
 
-Komponenty są dostępne w folderze `src/components/ui`, zgodnie z aliasami z pliku `components.json`
+Komponenty są dostępne w folderze `/10x-card-from-template/src/components/ui`, zgodnie z aliasami z pliku `components.json`
 
 ## Wykorzystanie komponentu
 
