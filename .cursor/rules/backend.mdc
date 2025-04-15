@@ -5,7 +5,7 @@ alwaysApply: false
 ---
 ---
 description: 
-globs: 10x-card-from-template/src/db/*.ts,10x-card-from-template/src/middleware/*.ts,10x-card-from-template/src/lib/*.ts
+globs: src/db/*.ts,src/middleware/*.ts,src/lib/*.ts
 alwaysApply: false
 ---
 ### Backend and Database
@@ -14,4 +14,4 @@ alwaysApply: false
 - Follow Supabase guidelines for security and performance.
 - Use Zod schemas to validate data exchanged with the backend.
 - Use supabase from context.locals in Astro routes instead of importing supabaseClient directly
-- Use SupabaseClient type from `10x-card-from-template/src/db/supabase.client.ts`, not from `@supabase/supabase-js`
+- Use SupabaseClient type from `src/db/supabase.client.ts`, not from `@supabase/supabase-js`

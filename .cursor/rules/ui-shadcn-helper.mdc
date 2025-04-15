@@ -14,7 +14,7 @@ Ten projekt wykorzystuje @shadcn/ui dla komponentów interfejsu użytkownika. S�
 
 ## Odszukiwanie zainstalowanych komponentów
 
-Komponenty są dostępne w folderze `/10x-card-from-template/src/components/ui`, zgodnie z aliasami z pliku `components.json`
+Komponenty są dostępne w folderze `/src/components/ui`, zgodnie z aliasami z pliku `components.json`
 
 ## Wykorzystanie komponentu
 

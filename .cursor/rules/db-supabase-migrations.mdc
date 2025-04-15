@@ -16,7 +16,7 @@ This project uses the migrations provided by the Supabase CLI.
 
 ## Creating a migration file
 
-Given the context of the user's message, create a database migration file inside the folder `/10x-card-from-template/supabase/migrations/`.
+Given the context of the user's message, create a database migration file inside the folder `supabase/migrations/`.
 
 The file MUST following this naming convention:
 

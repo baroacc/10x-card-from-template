@@ -66,3 +66,12 @@ export type GenerationDetailDTO = Generation & {
 }
 
 export type GenerationErrorLogDTO = Pick<GenerationErrorLog, 'id' | 'ai_model' | 'error_code' | 'error_message' | 'created_at' | 'user_id' | 'source_text_hash' | 'source_text_length'>;
+
+/** Parameters for fetching flashcards */
+export interface GetFlashcardsParams {
+  page: number;
+  limit: number;
+  search?: string;
+  sortBy?: string;
+  order?: 'asc' | 'desc';
+}

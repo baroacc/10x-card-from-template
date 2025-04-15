@@ -1,5 +1,5 @@
 import type { Database } from '../db/database.types';
-import type { CreateGenerationResponseDTO, FlashCardProposalDTO, GenerateFlashcardsCommand } from '../types';
+import type { CreateGenerationResponseDTO, FlashCardProposalDTO, GenerateFlashcardsCommand, GenerationDetailDTO, PaginationDTO } from '../types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
@@ -125,5 +125,35 @@ export class GenerationsService {
 
   private generateHash(text: string): string {
     return crypto.createHash('md5').update(text).digest('hex');
+  }
+
+  async getGenerations(userId: string, page: number, limit: number): Promise<{ data: GenerationDetailDTO[], pagination: PaginationDTO }> {
+    const offset = (page - 1) * limit;
+
+    // Get data with count
+    const { data: generations, error, count: total } = await this.supabase
+      .from('generations')
+      .select('*', { count: 'exact' })
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+    if (!generations) throw new Error('Failed to fetch generations');
+    if (total === null) throw new Error('Failed to get total count of generations');
+
+    const generationsWithProposals: GenerationDetailDTO[] = generations.map(gen => ({
+      ...gen,
+      flashcards_proposals: []
+    }));
+
+    return {
+      data: generationsWithProposals,
+      pagination: {
+        page,
+        limit,
+        total
+      }
+    };
   }
 } 

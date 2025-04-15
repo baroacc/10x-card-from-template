@@ -1,15 +1,20 @@
 import { z } from 'zod';
 import type { APIRoute } from 'astro';
-import type { GenerateFlashcardsCommand } from '../../types';
+import type { GenerateFlashcardsCommand, GenerationDetailDTO, PaginationDTO } from '../../types';
 import { GenerationsService } from '../../services/generations.service';
-import { DEFAULT_USER_ID, supabaseClient } from '../../db/supabase.client';
+import { DEFAULT_USER_ID } from '../../db/supabase.client';
 
-// Input validation schema
+// Input validation schemas
 const generateFlashcardsSchema = z.object({
   source_text: z.string()
     .min(1000, 'Text must be at least 1000 characters long')
     .max(10000, 'Text cannot exceed 10000 characters')
 }) satisfies z.ZodType<GenerateFlashcardsCommand>;
+
+const paginationSchema = z.object({
+  page: z.coerce.number().int().positive().optional().default(1),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(10)
+});
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -30,7 +35,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
     
-    const generationsService = new GenerationsService(supabaseClient);
+    const generationsService = new GenerationsService(locals.supabase);
     const result = await generationsService.createGeneration(validationResult.data, DEFAULT_USER_ID);
 
     return new Response(JSON.stringify(result), {
@@ -39,6 +44,44 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
   } catch (error) {
     console.error('Error processing generation request:', error);
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
+  }
+}
+
+export const GET: APIRoute = async ({ url, locals }) => {
+  try {
+    const searchParams = Object.fromEntries(url.searchParams);
+    const validationResult = paginationSchema.safeParse(searchParams);
+
+    if (!validationResult.success) {
+      return new Response(
+        JSON.stringify({
+          error: 'Validation failed',
+          details: validationResult.error.errors
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    const { page, limit } = validationResult.data;
+    const generationsService = new GenerationsService(locals.supabase);
+    const result = await generationsService.getGenerations(DEFAULT_USER_ID, page, limit);
+
+    return new Response(JSON.stringify(result), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    console.error('Error fetching generations:', error);
     return new Response(
       JSON.stringify({ error: 'Internal server error' }),
       {
