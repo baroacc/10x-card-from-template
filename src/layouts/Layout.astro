@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { TopbarWrapper } from "../components/TopbarWrapper";
 
 interface Props {
   title?: string;
@@ -18,7 +19,10 @@ const { title = "10x Astro Starter" } = Astro.props;
     <title>{title}</title>
   </head>
   <body>
-    <slot />
+    <TopbarWrapper client:load />
+    <main class="container mx-auto px-4">
+      <slot />
+    </main>
   </body>
 </html>
 
