@@ -75,3 +75,8 @@ export interface GetFlashcardsParams {
   sortBy?: string;
   order?: 'asc' | 'desc';
 }
+
+export interface FlashcardProposalViewModel extends FlashCardProposalDTO {
+  accepted: boolean;
+  edited: boolean;
+}
