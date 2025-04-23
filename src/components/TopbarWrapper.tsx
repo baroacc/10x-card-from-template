@@ -10,34 +10,33 @@ export function TopbarWrapper() {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const response = await fetch('/api/auth/me');
-        
-        if (response.status === 401) {
-          // Użytkownik nie jest zalogowany
-          setUser(null);
-          return;
-        }
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setUser({
-          name: data.user.name || data.user.email,
-          email: data.user.email
-        });
-      } catch (err) {
-        console.error('Error fetching user:', err);
+  const checkUser = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      
+      if (!response.ok) {
+        // Użytkownik nie jest zalogowany lub wystąpił inny błąd
         setUser(null);
-      } finally {
-        setIsLoading(false);
+        return;
       }
-    };
 
+      const data = await response.json();
+      setUser({
+        name: data.user.name || data.user.email,
+        email: data.user.email
+      });
+    } catch (err) {
+      // Logujemy tylko nieoczekiwane błędy, nie status 401
+      if (err instanceof Error && !err.message.includes('401')) {
+        console.error('Unexpected error fetching user:', err);
+      }
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     checkUser();
   }, []);
 
@@ -56,7 +55,7 @@ export function TopbarWrapper() {
         return;
       }
 
-      // Przekierowanie do strony logowania nastąpi przez middleware
+      // Zamiast używać router.push, używamy window.location
       window.location.href = '/login';
     } catch (err) {
       console.error('Unexpected error during logout:', err);

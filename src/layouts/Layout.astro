@@ -1,4 +1,5 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
 import "../styles/global.css";
 import { TopbarWrapper } from "../components/TopbarWrapper";
 import { Toaster } from 'sonner';
@@ -18,13 +19,21 @@ const { title = "10x Astro Starter" } = Astro.props;
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <ViewTransitions />
   </head>
   <body>
-    <TopbarWrapper client:load />
-    <main class="container mx-auto px-4">
+    <TopbarWrapper client:load transition:persist />
+    <main class="container mx-auto px-4" transition:animate="slide">
       <slot />
     </main>
-    <Toaster richColors closeButton client:only="react" />
+    <Toaster 
+      richColors 
+      closeButton 
+      position="bottom-right"
+      theme="light"
+      className="toaster-custom"
+      client:only="react" 
+    />
   </body>
 </html>
 
@@ -34,5 +43,12 @@ const { title = "10x Astro Starter" } = Astro.props;
     margin: 0;
     width: 100%;
     height: 100%;
+  }
+
+  :global(.toaster-custom) {
+    --toast-success: #10b981 !important;
+    --toast-error: #ef4444 !important;
+    --toast-border-radius: 0.5rem !important;
+    font-family: inherit !important;
   }
 </style>

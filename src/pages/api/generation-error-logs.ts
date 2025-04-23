@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { APIRoute } from 'astro';
 import type { GenerationErrorLogDTO, PaginationDTO } from '../../types';
 import { GenerationErrorLogsService } from '../../services/generation-error-logs.service';
-import { DEFAULT_USER_ID, createSupabaseServerClient } from '../../db/supabase.client';
+import { createSupabaseServerClient } from '../../db/supabase.client';
 
 /**
  * Schemat walidacji parametrów zapytania dla paginacji
@@ -47,10 +47,21 @@ export const GET: APIRoute = async ({ url, locals, cookies, request }) => {
 
     const { page, limit } = validationResult.data;
     const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({
+        error: 'Unauthorized'
+      }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const generationErrorLogsService = new GenerationErrorLogsService(supabase);
     
     try {
-      const result = await generationErrorLogsService.getGenerationErrorLogs(DEFAULT_USER_ID, page, limit);
+      const result = await generationErrorLogsService.getGenerationErrorLogs(user.id, page, limit);
       
       return new Response(JSON.stringify(result), {
         status: 200,

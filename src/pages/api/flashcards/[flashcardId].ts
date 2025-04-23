@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import { FlashcardService } from '../../../services/flashcard.service';
-import { DEFAULT_USER_ID, createSupabaseServerClient } from '../../../db/supabase.client';
+import { createSupabaseServerClient } from '../../../db/supabase.client';
 import type { FlashcardDTO } from '../../../types';
 
 // Disable prerendering for dynamic API route
@@ -54,12 +54,23 @@ export const PUT: APIRoute = async ({ params, request, locals, cookies }) => {
     }
 
     const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({
+        error: 'Unauthorized'
+      }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const flashcardService = new FlashcardService(supabase);
 
     try {
       const updatedFlashcard = await flashcardService.updateFlashcard(
         flashcardId,
-        DEFAULT_USER_ID,
+        user.id,
         validationResult.data
       );
 
@@ -111,10 +122,21 @@ export const DELETE: APIRoute = async ({ params, locals, cookies, request }) => 
     }
 
     const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({
+        error: 'Unauthorized'
+      }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const flashcardService = new FlashcardService(supabase);
 
     try {
-      await flashcardService.deleteFlashcard(flashcardId, DEFAULT_USER_ID);
+      await flashcardService.deleteFlashcard(flashcardId, user.id);
 
       return new Response(JSON.stringify({ 
         message: 'Flashcard deleted successfully' 
@@ -168,10 +190,21 @@ export const GET: APIRoute = async ({ params, locals, cookies, request }) => {
 
     const { flashcardId } = result.data;
     const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({
+        error: 'Unauthorized'
+      }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const flashcardService = new FlashcardService(supabase);
 
     try {
-      const flashcard = await flashcardService.getFlashcard(flashcardId, DEFAULT_USER_ID);
+      const flashcard = await flashcardService.getFlashcard(flashcardId, user.id);
 
       return new Response(
         JSON.stringify(flashcard), 

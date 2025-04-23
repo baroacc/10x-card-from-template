@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -30,6 +30,17 @@ type LoginFormValues = z.infer<typeof loginFormSchema>
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [welcomeMessage, setWelcomeMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Sprawdzamy czy użytkownik przyszedł ze strony rejestracji
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('registered') === 'true') {
+      setWelcomeMessage('Your account has been created successfully. Please sign in to continue.')
+      // Usuwamy parametr z URL bez przeładowania strony
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+  }, [])
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -43,6 +54,7 @@ export function LoginForm() {
     try {
       setIsLoading(true)
       setError(null)
+      setWelcomeMessage(null)
       
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -77,6 +89,11 @@ export function LoginForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {welcomeMessage && (
+              <div className="p-3 text-sm text-green-500 bg-green-50 rounded-md">
+                {welcomeMessage}
+              </div>
+            )}
             {error && (
               <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">
                 {error}

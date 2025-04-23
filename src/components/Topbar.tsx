@@ -32,14 +32,20 @@ export function Topbar({ user, onLogout }: TopbarProps) {
     <header className="sticky top-0 z-50 w-full border-b bg-black">
       <div className="flex h-14 items-center justify-end pr-[50px]">
         <nav className="flex items-center gap-6">
-          <a href="/generate" className="font-medium text-white transition-colors hover:text-white/80">
+          <a 
+            href="/generate"
+            className="font-medium text-white/70 hover:text-white transition-colors"
+          >
             Generowanie
           </a>
-          <a href="/flashcard" className="font-medium text-white transition-colors hover:text-white/80">
+          <a 
+            href="/flashcard"
+            className="font-medium text-white/70 hover:text-white transition-colors"
+          >
             Moje Fiszki
           </a>
 
-          <DropdownMenu>
+          <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
@@ -58,8 +64,10 @@ export function Topbar({ user, onLogout }: TopbarProps) {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <a href="/profile">Profil</a>
+              <DropdownMenuItem>
+                <a href="/profile" className="w-full">
+                  Profil
+                </a>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={onLogout}>
                 Wyloguj się

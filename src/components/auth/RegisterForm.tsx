@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Form,
   FormControl,
@@ -38,6 +37,8 @@ type RegisterFormValues = z.infer<typeof registerFormSchema>
 
 export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
@@ -48,11 +49,40 @@ export function RegisterForm() {
     },
   })
 
-  function onSubmit(data: RegisterFormValues) {
-    setIsLoading(true)
-    // Registration logic will be implemented later
-    console.log(data)
-    setIsLoading(false)
+  async function onSubmit(data: RegisterFormValues) {
+    try {
+      setIsLoading(true)
+      setError(null)
+      setSuccess(null)
+      
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      })
+
+      const responseData = await response.json()
+
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Failed to register')
+      }
+
+      setSuccess(responseData.message)
+      
+      // Przekierowanie po 2 sekundach, aby użytkownik zdążył przeczytać komunikat
+      setTimeout(() => {
+        window.location.href = '/login?registered=true'
+      }, 2000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -66,6 +96,11 @@ export function RegisterForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">
+                {error}
+              </div>
+            )}
             <FormField
               control={form.control}
               name="email"

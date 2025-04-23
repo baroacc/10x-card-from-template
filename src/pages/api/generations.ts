@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { APIRoute } from 'astro';
 import type { GenerateFlashcardsCommand, GenerationDetailDTO, PaginationDTO } from '../../types';
 import { GenerationsService } from '../../services/generations.service';
-import { DEFAULT_USER_ID, createSupabaseServerClient } from '../../db/supabase.client';
+import { createSupabaseServerClient } from '../../db/supabase.client';
 
 // Input validation schemas
 const generateFlashcardsSchema = z.object({
@@ -36,8 +36,19 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     }
     
     const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({
+        error: 'Unauthorized'
+      }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const generationsService = new GenerationsService(supabase);
-    const result = await generationsService.createGeneration(validationResult.data, DEFAULT_USER_ID);
+    const result = await generationsService.createGeneration(validationResult.data, user.id);
 
     return new Response(JSON.stringify(result), {
       status: 201,
@@ -75,8 +86,19 @@ export const GET: APIRoute = async ({ url, locals, cookies, request }) => {
 
     const { page, limit } = validationResult.data;
     const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({
+        error: 'Unauthorized'
+      }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const generationsService = new GenerationsService(supabase);
-    const result = await generationsService.getGenerations(DEFAULT_USER_ID, page, limit);
+    const result = await generationsService.getGenerations(user.id, page, limit);
 
     return new Response(JSON.stringify(result), {
       status: 200,

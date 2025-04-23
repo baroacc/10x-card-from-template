@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import type { CreateFlashcardsCommand, FlashcardListResponseDTO } from '../../types';
 import { FlashcardService, type GetFlashcardsParams } from '../../services/flashcard.service';
-import { DEFAULT_USER_ID, createSupabaseServerClient } from '../../db/supabase.client';
+import { createSupabaseServerClient } from '../../db/supabase.client';
 
 // Disable prerendering for dynamic API route
 export const prerender = false;
@@ -48,10 +48,21 @@ export const GET: APIRoute = async ({ url, locals, cookies, request }) => {
 
     const params = validationResult.data as GetFlashcardsParams;
     const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({
+        error: 'Unauthorized'
+      }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const flashcardService = new FlashcardService(supabase);
 
     // Fetch flashcards
-    const { data, total } = await flashcardService.getFlashcards(DEFAULT_USER_ID, params);
+    const { data, total } = await flashcardService.getFlashcards(user.id, params);
 
     const response: FlashcardListResponseDTO = {
       data,
@@ -96,10 +107,21 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
 
     const { flashcards } = validationResult.data;
     const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      return new Response(JSON.stringify({
+        error: 'Unauthorized'
+      }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const flashcardService = new FlashcardService(supabase);
 
     // Create flashcards
-    const createdFlashcards = await flashcardService.createFlashcards(flashcards, DEFAULT_USER_ID);
+    const createdFlashcards = await flashcardService.createFlashcards(flashcards, user.id);
 
     return new Response(JSON.stringify({ 
       data: createdFlashcards 

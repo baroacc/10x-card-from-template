@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { GenerationView } from '../components/GenerationView';
+import { Profile } from '../components/Profile';
 
 // Ensure user is authenticated
 const { user } = Astro.locals;
@@ -13,6 +13,6 @@ if (!user) {
 export const prerender = false;
 ---
 
-<Layout title="Generate Flashcards">
-  <GenerationView client:load />
+<Layout title="Profil użytkownika">
+  <Profile client:load user={user} />
 </Layout> 
