@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import { FlashcardService } from '../../../services/flashcard.service';
-import { DEFAULT_USER_ID } from '../../../db/supabase.client';
+import { DEFAULT_USER_ID, createSupabaseServerClient } from '../../../db/supabase.client';
 import type { FlashcardDTO } from '../../../types';
 
 // Disable prerendering for dynamic API route
@@ -18,7 +18,7 @@ const updateFlashcardSchema = z.object({
   message: "At least one field must be provided for update"
 });
 
-export const PUT: APIRoute = async ({ params, request, locals }) => {
+export const PUT: APIRoute = async ({ params, request, locals, cookies }) => {
   try {
     if (!params.flashcardId) {
       return new Response(JSON.stringify({
@@ -53,7 +53,8 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
       });
     }
 
-    const flashcardService = new FlashcardService(locals.supabase);
+    const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    const flashcardService = new FlashcardService(supabase);
 
     try {
       const updatedFlashcard = await flashcardService.updateFlashcard(
@@ -88,7 +89,7 @@ export const PUT: APIRoute = async ({ params, request, locals }) => {
   }
 }
 
-export const DELETE: APIRoute = async ({ params, locals }) => {
+export const DELETE: APIRoute = async ({ params, locals, cookies, request }) => {
   try {
     if (!params.flashcardId) {
       return new Response(JSON.stringify({
@@ -109,7 +110,8 @@ export const DELETE: APIRoute = async ({ params, locals }) => {
       });
     }
 
-    const flashcardService = new FlashcardService(locals.supabase);
+    const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    const flashcardService = new FlashcardService(supabase);
 
     try {
       await flashcardService.deleteFlashcard(flashcardId, DEFAULT_USER_ID);
@@ -147,7 +149,7 @@ const paramsSchema = z.object({
   flashcardId: z.string().regex(/^\d+$/).transform(Number),
 });
 
-export const GET: APIRoute = async ({ params, locals }) => {
+export const GET: APIRoute = async ({ params, locals, cookies, request }) => {
   try {
     // Validate flashcardId parameter
     const result = paramsSchema.safeParse(params);
@@ -165,7 +167,8 @@ export const GET: APIRoute = async ({ params, locals }) => {
     }
 
     const { flashcardId } = result.data;
-    const flashcardService = new FlashcardService(locals.supabase);
+    const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    const flashcardService = new FlashcardService(supabase);
 
     try {
       const flashcard = await flashcardService.getFlashcard(flashcardId, DEFAULT_USER_ID);

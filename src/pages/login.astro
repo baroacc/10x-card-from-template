@@ -1,6 +1,10 @@
 ---
 import Layout from "@/layouts/Layout.astro"
 import { LoginForm } from "@/components/auth/LoginForm"
+
+export const prerender = false;
+
+// Przekierowanie będzie obsługiwane przez middleware
 ---
 
 <Layout title="Sign in - 10x Cards">

@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Form,
   FormControl,
@@ -30,6 +29,7 @@ type LoginFormValues = z.infer<typeof loginFormSchema>
 
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -39,11 +39,31 @@ export function LoginForm() {
     },
   })
 
-  function onSubmit(data: LoginFormValues) {
-    setIsLoading(true)
-    // Login logic will be implemented later
-    console.log(data)
-    setIsLoading(false)
+  async function onSubmit(data: LoginFormValues) {
+    try {
+      setIsLoading(true)
+      setError(null)
+      
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to sign in')
+      }
+
+      // Przekierowanie nastąpi przez middleware
+      window.location.href = '/generate'
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -57,6 +77,11 @@ export function LoginForm() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">
+                {error}
+              </div>
+            )}
             <FormField
               control={form.control}
               name="email"

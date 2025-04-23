@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import type { CreateFlashcardsCommand, FlashcardListResponseDTO } from '../../types';
 import { FlashcardService, type GetFlashcardsParams } from '../../services/flashcard.service';
-import { DEFAULT_USER_ID } from '../../db/supabase.client';
+import { DEFAULT_USER_ID, createSupabaseServerClient } from '../../db/supabase.client';
 
 // Disable prerendering for dynamic API route
 export const prerender = false;
@@ -30,7 +30,7 @@ const getFlashcardsQuerySchema = z.object({
   order: z.enum(['asc', 'desc']).optional()
 });
 
-export const GET: APIRoute = async ({ url, locals }) => {
+export const GET: APIRoute = async ({ url, locals, cookies, request }) => {
   try {
     // Parse and validate query parameters
     const searchParams = Object.fromEntries(url.searchParams);
@@ -47,7 +47,8 @@ export const GET: APIRoute = async ({ url, locals }) => {
     }
 
     const params = validationResult.data as GetFlashcardsParams;
-    const flashcardService = new FlashcardService(locals.supabase);
+    const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    const flashcardService = new FlashcardService(supabase);
 
     // Fetch flashcards
     const { data, total } = await flashcardService.getFlashcards(DEFAULT_USER_ID, params);
@@ -77,7 +78,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
   }
 }
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals, cookies }) => {
   try {
     // Parse and validate request body
     const body = await request.json() as CreateFlashcardsCommand;
@@ -94,7 +95,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     const { flashcards } = validationResult.data;
-    const flashcardService = new FlashcardService(locals.supabase);
+    const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    const flashcardService = new FlashcardService(supabase);
 
     // Create flashcards
     const createdFlashcards = await flashcardService.createFlashcards(flashcards, DEFAULT_USER_ID);

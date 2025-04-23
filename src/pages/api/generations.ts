@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { APIRoute } from 'astro';
 import type { GenerateFlashcardsCommand, GenerationDetailDTO, PaginationDTO } from '../../types';
 import { GenerationsService } from '../../services/generations.service';
-import { DEFAULT_USER_ID } from '../../db/supabase.client';
+import { DEFAULT_USER_ID, createSupabaseServerClient } from '../../db/supabase.client';
 
 // Input validation schemas
 const generateFlashcardsSchema = z.object({
@@ -16,7 +16,7 @@ const paginationSchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional().default(10)
 });
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals, cookies }) => {
   try {
     // Parse and validate request body
     const body = await request.json() as GenerateFlashcardsCommand;
@@ -35,7 +35,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
     
-    const generationsService = new GenerationsService(locals.supabase);
+    const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    const generationsService = new GenerationsService(supabase);
     const result = await generationsService.createGeneration(validationResult.data, DEFAULT_USER_ID);
 
     return new Response(JSON.stringify(result), {
@@ -54,7 +55,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 }
 
-export const GET: APIRoute = async ({ url, locals }) => {
+export const GET: APIRoute = async ({ url, locals, cookies, request }) => {
   try {
     const searchParams = Object.fromEntries(url.searchParams);
     const validationResult = paginationSchema.safeParse(searchParams);
@@ -73,7 +74,8 @@ export const GET: APIRoute = async ({ url, locals }) => {
     }
 
     const { page, limit } = validationResult.data;
-    const generationsService = new GenerationsService(locals.supabase);
+    const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    const generationsService = new GenerationsService(supabase);
     const result = await generationsService.getGenerations(DEFAULT_USER_ID, page, limit);
 
     return new Response(JSON.stringify(result), {

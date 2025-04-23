@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { APIRoute } from 'astro';
 import type { GenerationErrorLogDTO, PaginationDTO } from '../../types';
 import { GenerationErrorLogsService } from '../../services/generation-error-logs.service';
-import { DEFAULT_USER_ID } from '../../db/supabase.client';
+import { DEFAULT_USER_ID, createSupabaseServerClient } from '../../db/supabase.client';
 
 /**
  * Schemat walidacji parametrów zapytania dla paginacji
@@ -26,7 +26,7 @@ export const prerender = false;
  * @returns {GenerationErrorLogDTO[]} data - Lista logów błędów generacji
  * @returns {PaginationDTO} pagination - Informacje o paginacji (page, limit, total)
  */
-export const GET: APIRoute = async ({ url, locals }) => {
+export const GET: APIRoute = async ({ url, locals, cookies, request }) => {
   try {
     // Parsowanie i walidacja parametrów zapytania
     const searchParams = Object.fromEntries(url.searchParams);
@@ -46,7 +46,8 @@ export const GET: APIRoute = async ({ url, locals }) => {
     }
 
     const { page, limit } = validationResult.data;
-    const generationErrorLogsService = new GenerationErrorLogsService(locals.supabase);
+    const supabase = createSupabaseServerClient({ headers: request.headers, cookies });
+    const generationErrorLogsService = new GenerationErrorLogsService(supabase);
     
     try {
       const result = await generationErrorLogsService.getGenerationErrorLogs(DEFAULT_USER_ID, page, limit);
