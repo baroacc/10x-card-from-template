@@ -174,7 +174,7 @@ export function FlashcardsPage() {
           ? 'Failed to update flashcard. Please try again.'
           : 'Failed to create flashcard. Please try again.'
       );
-      throw err; // Re-throw to let the modal handle the error state
+      throw err;
     }
   };
 
