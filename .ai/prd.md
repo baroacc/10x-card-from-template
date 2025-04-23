@@ -55,6 +55,7 @@ W ramach MVP nie zostaną wdrożone następujące funkcjonalności:
   - Użytkownik może dokonać rejestracji poprzez unikalny adres e-mail oraz hasło.
   - System stosuje walidację danych
   - Użytkownik otrzymuje potwierdzenie rejestracji oraz zostaje zalogowany
+  - Rejestracja będzie wykonywana na dedykowanej stronie
 
 ### US-002
 - ID: US-002
@@ -63,16 +64,19 @@ W ramach MVP nie zostaną wdrożone następujące funkcjonalności:
 - Kryteria akceptacji:
   - Po podaniu prawidłowych danych (e-mail oraz hasło) użytkownik zostaje przekierowany do strony głównej aplikacji
   - Błąd logowania powoduje wyświetlenie informacji o nieprawidłowych danych
+  - Logowanie będzie wykonywane na dedykowanej stronie
+  - Nie korzystamy z zewnętrznych serwisów do logowania (np. Facebook)
 
 
 ### US-003
 - ID: US-003
 - Tytuł: Generowanie fiszek przy użyciu AI
-- Opis: Jako zarejestrowany użytkownik chcę wprowadzić tekst (od 1000 do 10000 znaków), aby AI mogła wygenerować kandydatury fiszek, co przyspieszy proces tworzenia zestawu fiszek.
+- Opis: Jako zalogowany użytkownik chcę wprowadzić tekst (od 1000 do 10000 znaków), aby AI mogła wygenerować kandydatury fiszek, co przyspieszy proces tworzenia zestawu fiszek.
 - Kryteria akceptacji:
   - Pole tekstowe przyjmuje od 1000 do 10000 znaków.
   - AI generuje fiszki zawierające pola "przód" i "tył" zgodnie z limitami znaków (200 znaków dla przodu, 500 dla tyłu).
   - Wygenerowane fiszki przechodzą przez proces recenzji przez użytkownika.
+  - Użytkownik NIE MOŻE generować fiszek bez zalogowania się do systemu
 
 ### US-004
 - ID: US-004
@@ -82,6 +86,7 @@ W ramach MVP nie zostaną wdrożone następujące funkcjonalności:
   - Formularz umożliwia wprowadzenie pola "przód" (do 200 znaków) oraz "tył" (do 500 znaków).
   - Po zatwierdzeniu, fiszka zostaje zapisana w bazie danych użytkownika.
   - Formularz jest intuicyjny i szybki w obsłudze.
+  - Użytkownik NIE MOŻE tworzyć ręcznie fiszek bez zalogowania się do systemu
 
 ### US-005
 - ID: US-005
@@ -92,6 +97,7 @@ W ramach MVP nie zostaną wdrożone następujące funkcjonalności:
   - Użytkownik ma opcje: zaakceptuj, edytuj lub odrzuć każdą fiszkę.
   - Po wyborze opcji, system umożliwia zapis w trybie bulk (zapis tylko fiszek zaakceptowanych).
   - Edycja umożliwia modyfikację obu pól fiszki („przód” i „tył”) zgodnie z limitami znaków.
+  - Użytkownik NIE MOŻE wykonywać akceptować, edytować ani usuwać fiszek bez zalogowania się do systemu
 
 ### US-006
 - ID: US-006
@@ -102,15 +108,7 @@ W ramach MVP nie zostaną wdrożone następujące funkcjonalności:
   - Interfejs umożliwia wyszukiwanie fiszek po tytule lub zawartości.
   - Użytkownik może wprowadzać edycje w modalach lub bezpośrednio na liście.
   - Użytkownik może usunąć fiszkę z potwierdzeniem akcji.
-
-### US-007
-- ID: US-007
-- Tytuł: Nauka z algorytmem powtórek
-- Opis: Jako zalogowany użytkownik chcę aby zapisane fiszki były dostępne w sesjach powtórek, które będą wykorzystywać zewnętrzną bibliotekę.
-- Kryteria akceptacji:
-  - W widoku "Sesja nauki" algorytm przygotowuje dla mnie sesję nauki fiszek
-  - Na start wyświetlany jest przód fiszki, poprzez interakcje wyświetlany jest jej tył
-  - Użytkownik ocenia na ile przyswoił fiszkę, a następnie system pokazuje kolejną
+  - Użytkownik NIE MOŻE wykonywać akceptować, edytować ani usuwać fiszek bez zalogowania się do systemu
 
 ## 6. Metryki sukcesu
 1. Akceptacja fiszek generowanych przez AI:

@@ -35,7 +35,7 @@ export function Topbar({ user, onLogout }: TopbarProps) {
           <a href="/generate" className="font-medium text-white transition-colors hover:text-white/80">
             Generowanie
           </a>
-          <a href="/flashcards" className="font-medium text-white transition-colors hover:text-white/80">
+          <a href="/flashcard" className="font-medium text-white transition-colors hover:text-white/80">
             Moje Fiszki
           </a>
 

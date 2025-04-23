@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import { TopbarWrapper } from "../components/TopbarWrapper";
+import { Toaster } from 'sonner';
 
 interface Props {
   title?: string;
@@ -23,6 +24,7 @@ const { title = "10x Astro Starter" } = Astro.props;
     <main class="container mx-auto px-4">
       <slot />
     </main>
+    <Toaster richColors closeButton client:only="react" />
   </body>
 </html>
 
