@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Profile } from '../components/Profile';
+import { Profile as ProfileComponent } from '../components/Profile';
 
 // Ensure user is authenticated
 const { user } = Astro.locals;
@@ -14,5 +14,5 @@ export const prerender = false;
 ---
 
 <Layout title="Profil użytkownika">
-  <Profile client:load user={user} />
+  <ProfileComponent client:only="react" />
 </Layout> 

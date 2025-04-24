@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import {
-  AlertDialog,
+  AlertDialog as AlertDialogRoot,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
@@ -50,7 +50,7 @@ export function FlashcardItem({ flashcard, onEdit, onDelete }: FlashcardItemProp
               <Pencil className="h-4 w-4" />
               <span className="sr-only">Edit flashcard</span>
             </Button>
-            <AlertDialog>
+            <AlertDialogRoot>
               <AlertDialogTrigger asChild>
                 <Button
                   variant="ghost"
@@ -78,7 +78,7 @@ export function FlashcardItem({ flashcard, onEdit, onDelete }: FlashcardItemProp
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
-            </AlertDialog>
+            </AlertDialogRoot>
           </div>
         </div>
       </CardHeader>

@@ -38,6 +38,10 @@ The project leverages a modern tech stack for both frontend and backend developm
   - **Supabase:** Serves as a comprehensive backend solution offering a PostgreSQL database, built-in user authentication, and real-time capabilities.
 - **AI Integration:**
   - **Openrouter.ai:** Enables integration with multiple AI models (OpenAI, Anthropic, Google, etc.) while managing API key costs.
+- **Testing:**
+  - **Vitest:** For fast and efficient unit testing of components and utility functions.
+  - **React Testing Library:** For component testing with a focus on user interactions.
+  - **Playwright:** For comprehensive end-to-end testing across multiple browsers.
 - **CI/CD and Hosting:**
   - **GitHub Actions:** For continuous integration and deployment pipelines.
   - **DigitalOcean:** For hosting using Docker containers.
@@ -80,6 +84,9 @@ From the project root, you can run:
 - **`npm run lint`**: Lints the project files.
 - **`npm run lint:fix`**: Automatically fixes linting issues.
 - **`npm run format`**: Formats code using Prettier.
+- **`npm run test`**: Runs unit tests with Vitest.
+- **`npm run test:watch`**: Runs unit tests in watch mode.
+- **`npm run test:e2e`**: Runs end-to-end tests with Playwright.
 
 ## Project Scope
 The key functionalities of **10x-cards** include:

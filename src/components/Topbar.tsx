@@ -46,13 +46,13 @@ export function Topbar({ user, onLogout }: TopbarProps) {
           </a>
 
           <DropdownMenu modal={false}>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+            <DropdownMenuTrigger className="outline-none">
+              <div className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={user.avatarUrl} alt={user.name} />
                   <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
-              </Button>
+              </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">

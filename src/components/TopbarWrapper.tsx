@@ -6,9 +6,16 @@ interface User {
   email: string;
 }
 
-export function TopbarWrapper() {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+interface TopbarWrapperProps {
+  initialUser?: {
+    name: string;
+    email: string;
+  } | null;
+}
+
+export function TopbarWrapper({ initialUser }: TopbarWrapperProps) {
+  const [user, setUser] = useState<User | null>(initialUser ?? null);
+  const [isLoading, setIsLoading] = useState(!initialUser);
 
   const checkUser = async () => {
     try {
@@ -37,8 +44,10 @@ export function TopbarWrapper() {
   };
 
   useEffect(() => {
-    checkUser();
-  }, []);
+    if (!initialUser) {
+      checkUser();
+    }
+  }, [initialUser]);
 
   const handleLogout = async () => {
     try {
