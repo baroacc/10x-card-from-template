@@ -70,7 +70,7 @@ export function LoginForm() {
       }
 
       // Przekierowanie nastąpi przez middleware
-      window.location.href = '/generate'
+      window.location.replace(new URL('/generate', window.location.origin).href);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred')
     } finally {
@@ -79,7 +79,7 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto" data-testid="login-form-container">
       <CardHeader>
         <CardTitle>Welcome back</CardTitle>
         <CardDescription>
@@ -88,14 +88,21 @@ export function LoginForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              await form.handleSubmit(onSubmit)(e);
+            }} 
+            className="space-y-4" 
+            data-testid="login-form"
+          >
             {welcomeMessage && (
-              <div className="p-3 text-sm text-green-500 bg-green-50 rounded-md">
+              <div className="p-3 text-sm text-green-500 bg-green-50 rounded-md" data-testid="welcome-message">
                 {welcomeMessage}
               </div>
             )}
             {error && (
-              <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">
+              <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md" data-testid="error-message">
                 {error}
               </div>
             )}
@@ -106,9 +113,14 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="you@example.com" {...field} type="email" />
+                    <Input 
+                      placeholder="you@example.com" 
+                      {...field} 
+                      type="email"
+                      data-testid="email-input"
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage data-testid="email-error" />
                 </FormItem>
               )}
             />
@@ -119,13 +131,23 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your password" {...field} type="password" />
+                    <Input 
+                      placeholder="Enter your password" 
+                      {...field} 
+                      type="password"
+                      data-testid="password-input"
+                    />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage data-testid="password-error" />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isLoading}
+              data-testid="submit-button"
+            >
               {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
