@@ -66,8 +66,8 @@ export function GenerationView() {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <Card>
+    <div className="container mx-auto py-8" data-test-id="flashcard-generation-view">
+      <Card data-test-id="generation-card">
         <CardHeader>
           <CardTitle>Generate Flashcards</CardTitle>
         </CardHeader>
@@ -75,27 +75,29 @@ export function GenerationView() {
           <TextAreaInput 
             value={textInput}
             onChange={setTextInput}
+            data-test-id="source-text-input"
           />
           <div className="mt-4">
             <Button 
               onClick={handleGenerate}
               disabled={isLoading || textInput.length < 1000 || textInput.length > 10000}
+              data-test-id="generate-flashcards-button"
             >
               {isLoading ? 'Generating...' : 'Generate Flashcards'}
             </Button>
           </div>
           {error && (
-            <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-md">
+            <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-md" data-test-id="error-message">
               {error}
             </div>
           )}
           {showSuccess && !isSaving && (
-            <div className="mt-4 p-4 bg-green-50 text-green-700 rounded-md">
+            <div className="mt-4 p-4 bg-green-50 text-green-700 rounded-md" data-test-id="success-message">
               Flashcards have been successfully saved!
             </div>
           )}
           {isLoading ? (
-            <SkeletonLoader />
+            <SkeletonLoader data-test-id="loading-skeleton" />
           ) : (
             <>
               <FlashcardsList
@@ -103,12 +105,14 @@ export function GenerationView() {
                 onAccept={handleAccept}
                 onEdit={handleEdit}
                 onReject={handleReject}
+                data-test-id="flashcards-list"
               />
               <BulkSaveButton
                 proposals={proposals}
                 onSaveAll={handleSaveAll}
                 onSaveAccepted={handleSaveAccepted}
                 isSaving={isSaving}
+                data-test-id="bulk-save-buttons"
               />
             </>
           )}
