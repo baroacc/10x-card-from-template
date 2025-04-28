@@ -1,10 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
-
+import path from 'path';
+import dotenv from 'dotenv';
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-// require('dotenv').config();
+dotenv.config({ path: path.resolve(process.cwd(), '.env.test') });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -17,6 +18,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
+
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ['html'], 
@@ -31,6 +33,15 @@ export default defineConfig({
     trace: 'on-first-retry',
     /* Capture screenshot on failure */
     screenshot: 'only-on-failure',
+
+    /* Viewport settings */
+    viewport: {
+      width: parseInt(process.env.PLAYWRIGHT_VIEWPORT_WIDTH || '1280'),
+      height: parseInt(process.env.PLAYWRIGHT_VIEWPORT_HEIGHT || '720'),
+    },
+
+    /* Headless mode */
+    headless: process.env.PLAYWRIGHT_HEADLESS === 'true',
   },
 
   /* Configure projects for major browsers */
@@ -44,7 +55,7 @@ export default defineConfig({
   /* Run local dev server before starting the tests */
   webServer: {
     command: 'npm run preview',
-    url: 'http://localhost:4321',
+    url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
   },
 }); 
