@@ -10,7 +10,7 @@ test.describe('Login Page', () => {
   });
 
   test('Successfully login', async ({ page }) => {
-    await loginPage.login('bartosz.rolnik@accenture.com', 'RealMadryt1');
+    await loginPage.login(process.env.E2E_USERNAME || '', process.env.E2E_PASSWORD || '');
     await loginPage.waitForRedirectToGenerate();
   });
 }); 

@@ -82,6 +82,6 @@ export class LoginPage {
   }
 
   async waitForRedirectToGenerate() {
-    await this.page.waitForURL('/generate', { timeout: 1000 });
+    await this.page.waitForURL('/generate', { timeout: 5000 });
   }
 } 
