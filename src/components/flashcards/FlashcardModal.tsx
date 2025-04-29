@@ -80,7 +80,7 @@ export function FlashcardModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px]" data-testid="flashcard-form-modal">
         <DialogHeader>
           <DialogTitle>
             {flashcard ? 'Edit Flashcard' : 'Create New Flashcard'}
@@ -93,7 +93,7 @@ export function FlashcardModal({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6" data-testid="flashcard-form">
             <FormField
               control={form.control}
               name="front"
@@ -104,6 +104,7 @@ export function FlashcardModal({
                     <Textarea
                       placeholder="Enter the front side content..."
                       className="min-h-[100px]"
+                      data-testid="front-side-input"
                       {...field}
                     />
                   </FormControl>
@@ -122,6 +123,7 @@ export function FlashcardModal({
                     <Textarea
                       placeholder="Enter the back side content..."
                       className="min-h-[100px]"
+                      data-testid="back-side-input"
                       {...field}
                     />
                   </FormControl>
@@ -135,12 +137,14 @@ export function FlashcardModal({
                 type="button"
                 variant="outline"
                 onClick={onClose}
+                data-testid="cancel-button"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={form.formState.isSubmitting}
+                data-testid="submit-button"
               >
                 {flashcard ? 'Save Changes' : 'Create Flashcard'}
               </Button>

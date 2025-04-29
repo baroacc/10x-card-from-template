@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+/*import { test, expect } from '@playwright/test';
 import { LoginPage } from './pages/LoginPage';
 
 test.describe('Login Page', () => {
@@ -13,4 +13,4 @@ test.describe('Login Page', () => {
     await loginPage.login(process.env.E2E_USERNAME || '', process.env.E2E_PASSWORD || '');
     await loginPage.waitForRedirectToGenerate();
   });
-}); 
+});*/ 

@@ -74,7 +74,7 @@ export function Profile() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-4 max-w-2xl">
+      <div className="container mx-auto p-4 max-w-2xl" data-testid="profile-loading">
         <Card>
           <CardHeader>
             <div className="flex items-center space-x-4">
@@ -116,11 +116,11 @@ export function Profile() {
   const userInitials = user.email?.charAt(0).toUpperCase() || "U";
 
   return (
-    <div className="container mx-auto p-4 max-w-2xl">
+    <div className="container mx-auto p-4 max-w-2xl" data-testid="profile-container">
       <Card>
         <CardHeader>
           <div className="flex items-center space-x-4">
-            <Avatar className="h-20 w-20">
+            <Avatar className="h-20 w-20" data-testid="user-avatar">
               <AvatarImage src={user.user_metadata.avatar_url || undefined} />
               <AvatarFallback className="text-lg">{userInitials}</AvatarFallback>
             </Avatar>
@@ -134,22 +134,22 @@ export function Profile() {
           <div className="space-y-6">
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Email</h3>
-              <p className="text-base">{user.email}</p>
+              <p className="text-base" data-testid="user-email">{user.email}</p>
             </div>
             <Separator />
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Data dołączenia</h3>
-              <p className="text-base">{joinDate}</p>
+              <p className="text-base" data-testid="join-date">{joinDate}</p>
             </div>
             <Separator />
             <div className="flex flex-col space-y-2">
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild data-testid="change-password-button">
                 <a href="/auth/reset-password">Zmień hasło</a>
               </Button>
               
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="destructive">Zablokuj konto</Button>
+                  <Button variant="destructive" data-testid="deactivate-account-button">Zablokuj konto</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
@@ -163,6 +163,7 @@ export function Profile() {
                       variant="outline" 
                       onClick={() => setDialogOpen(false)}
                       disabled={isDeactivating}
+                      data-testid="cancel-deactivation-button"
                     >
                       Anuluj
                     </Button>
@@ -170,6 +171,7 @@ export function Profile() {
                       variant="destructive" 
                       onClick={handleDeactivateAccount}
                       disabled={isDeactivating}
+                      data-testid="confirm-deactivation-button"
                     >
                       {isDeactivating ? 'Blokowanie...' : 'Zablokuj konto'}
                     </Button>

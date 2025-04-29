@@ -179,7 +179,7 @@ export function FlashcardsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="flashcards-page">
       <div className="flex justify-between items-center">
         <div className="flex-1">
           <SearchAndPagination
@@ -188,29 +188,31 @@ export function FlashcardsPage() {
             pageSize={searchParams.limit}
             onSearch={handleSearch}
             onPageChange={handlePageChange}
+            data-testid="search-and-pagination"
           />
         </div>
-        <Button onClick={handleCreateNew}>
+        <Button onClick={handleCreateNew} data-testid="add-flashcard-button">
           Add new flashcard
         </Button>
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-8">
+        <div className="flex justify-center py-8" data-testid="loading-spinner">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
       ) : error ? (
-        <div className="text-center text-red-500 py-8">
+        <div className="text-center text-red-500 py-8" data-testid="error-message">
           {error}
         </div>
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-4" data-testid="flashcards-list">
           {flashcards.map(flashcard => (
             <FlashcardItem
               key={flashcard.id}
               flashcard={flashcard}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              data-testid={`flashcard-item-${flashcard.id}`}
             />
           ))}
         </div>
@@ -221,6 +223,7 @@ export function FlashcardsPage() {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
         flashcard={selectedFlashcard}
+        data-testid="flashcard-modal"
       />
     </div>
   );

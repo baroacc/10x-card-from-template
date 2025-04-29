@@ -53,6 +53,7 @@ export function SearchAndPagination({
           <PaginationLink
             onClick={() => onPageChange(i)}
             isActive={currentPage === i}
+            data-testid={`pagination-page-${i}`}
           >
             {i}
           </PaginationLink>
@@ -63,12 +64,17 @@ export function SearchAndPagination({
     if (startPage > 1) {
       pages.unshift(
         <PaginationItem key="start-ellipsis">
-          <PaginationEllipsis />
+          <PaginationEllipsis data-testid="pagination-start-ellipsis" />
         </PaginationItem>
       );
       pages.unshift(
         <PaginationItem key={1}>
-          <PaginationLink onClick={() => onPageChange(1)}>1</PaginationLink>
+          <PaginationLink 
+            onClick={() => onPageChange(1)}
+            data-testid="pagination-page-1"
+          >
+            1
+          </PaginationLink>
         </PaginationItem>
       );
     }
@@ -76,12 +82,15 @@ export function SearchAndPagination({
     if (endPage < totalPages) {
       pages.push(
         <PaginationItem key="end-ellipsis">
-          <PaginationEllipsis />
+          <PaginationEllipsis data-testid="pagination-end-ellipsis" />
         </PaginationItem>
       );
       pages.push(
         <PaginationItem key={totalPages}>
-          <PaginationLink onClick={() => onPageChange(totalPages)}>
+          <PaginationLink 
+            onClick={() => onPageChange(totalPages)}
+            data-testid={`pagination-page-${totalPages}`}
+          >
             {totalPages}
           </PaginationLink>
         </PaginationItem>
@@ -92,21 +101,23 @@ export function SearchAndPagination({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="search-pagination-container">
       <Input
         type="search"
         placeholder="Search flashcards..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="max-w-sm"
+        data-testid="search-input"
       />
       {total > 0 && (
-        <Pagination>
+        <Pagination data-testid="pagination">
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
                 onClick={() => onPageChange(currentPage - 1)}
                 className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                data-testid="pagination-previous"
               />
             </PaginationItem>
             {renderPageNumbers()}
@@ -114,6 +125,7 @@ export function SearchAndPagination({
               <PaginationNext
                 onClick={() => onPageChange(currentPage + 1)}
                 className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                data-testid="pagination-next"
               />
             </PaginationItem>
           </PaginationContent>
