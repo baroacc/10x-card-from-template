@@ -42,6 +42,7 @@ export class TopbarPage {
   async navigateToFlashcards() {
     await this.flashcardsLink.click();
     await this.page.waitForURL('/flashcard', {timeout: 10000});
+    await expect(this.page).toHaveURL('/flashcard');
   }
 
   // User menu actions

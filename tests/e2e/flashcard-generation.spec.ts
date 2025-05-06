@@ -1,11 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { GenerationPage } from './pages/GenerationPage';
-import { FlashcardItemPage } from './pages/FlashcardItemPage';
-import { BulkSaveComponent } from './pages/BulkSaveComponent';
 import { LoginPage } from './pages/LoginPage';
 import { TopbarPage } from './pages/TopbarPage';
 import { FlashcardsPage } from './pages/flashcards/FlashcardsPage';
-import { SearchAndPaginationPage } from './pages/flashcards/SearchAndPaginationPage';
 import randomstring from 'randomstring';
 import { FlashcardModalPage } from './pages/flashcards/FlashcardModalPage';
 
@@ -31,90 +28,41 @@ test.describe('AI Flashcard Generation', () => {
   test('Login -> Generate -> Save all -> Flashcards -> Search -> Edit -> Logout', async ({ page }) => {
     
     const generationPage = new GenerationPage(page);
-    const bulkSaveComponent = new BulkSaveComponent(page);
     const topbarPage = new TopbarPage(page);
     const flashcardsPage = new FlashcardsPage(page);
-    const searchAndPagination = new SearchAndPaginationPage(page);
     const flashcardModal = new FlashcardModalPage(page);
  
     await expect(page).toHaveURL('/generate');
     await generationPage.enterText(sampleText);
-    
     expect(await generationPage.isGenerateButtonEnabled()).toBeTruthy();
-    
+
     await generationPage.clickGenerate();
     await generationPage.saveAllFlashcards();
 
     await topbarPage.navigateToFlashcards();
-    await expect(page).toHaveURL('/flashcard');
+    
     await flashcardsPage.waitForSpinnerToDisappear(5000);
     await flashcardsPage.searchFlashcards("Gumiś");
 
     const flashcards = await flashcardsPage.getAllFlashcardItems();
     expect(flashcards.length).toBeGreaterThan(0);
-    const firstFlashcard = flashcards[0];
     
-    const randomString = randomstring.generate(10);
+    const firstFlashcard = flashcards[0];
     await firstFlashcard.clickEdit();
     
+    const randomString = randomstring.generate(10);
     let front = await flashcardModal.getFrontInput().inputValue();
     front = front + randomString;
     let back = await flashcardModal.getBackInput().inputValue();
+    
     await flashcardModal.editFlashcard(front, back);
+    
     await flashcardsPage.clearSearch();
     await flashcardsPage.searchFlashcards(randomString);
+    
     const editedFlashcards = await flashcardsPage.getAllFlashcardItems();
     expect(editedFlashcards.length).toEqual(1);
 
     await topbarPage.logout();
-    
-    /*
-    
-    
-    // Oczekiwanie na załadowanie fiszek
-    await generationPage.waitForFlashcardsList();
-    
-    // Sprawdzenie, czy wygenerowano fiszki
-    const flashcardsCount = await generationPage.getFlashcardsCount();
-    expect(flashcardsCount).toBeGreaterThan(0);
-    
-    // Zaakceptowanie wszystkich fiszek
-    for (let i = 0; i < flashcardsCount; i++) {
-      const flashcardItem = new FlashcardItemPage(page, i);
-      await flashcardItem.accept();
-      
-      // Sprawdzenie, czy fiszka została zaakceptowana
-      expect(await flashcardItem.isAccepted()).toBeTruthy();
-    }
-    
-    // Sprawdzenie przycisków masowego zapisu
-    expect(await bulkSaveComponent.isSaveAllEnabled()).toBeTruthy();
-    expect(await bulkSaveComponent.isSaveAcceptedEnabled()).toBeTruthy();
-    
-    // Liczba zaakceptowanych fiszek powinna odpowiadać całkowitej liczbie fiszek
-    expect(await bulkSaveComponent.getAcceptedFlashcardsCount()).toBe(flashcardsCount);
-    
-    // Zapisanie zaakceptowanych fiszek
-    await bulkSaveComponent.saveAccepted();
-    
-    // Sprawdzenie komunikatu sukcesu
-    await expect(generationPage.successMessage).toBeVisible();
-    
-    // Zapisanie screenshot'a końcowego
-    await page.screenshot({ path: 'test-results/generation-completed.png' });*/
   });
-
- /* test('Generate flashcards using helper method', async ({ page }) => {
-    // Inicjalizacja stron po zalogowaniu
-    const generationPage = new GenerationPage(page);
-    
-    // Weryfikacja, że jesteśmy na stronie generowania
-    await expect(page).toHaveURL('/generate');
-    
-    // Użycie metody pomocniczej do wygenerowania i zaakceptowania wszystkich fiszek
-    await generationPage.generateAndAcceptAll(sampleLoremIpsumText);
-    
-    // Sprawdzenie komunikatu sukcesu
-    await expect(generationPage.successMessage).toBeVisible();
-  });*/
 });

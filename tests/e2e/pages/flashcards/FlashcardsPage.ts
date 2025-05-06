@@ -134,8 +134,6 @@ export class FlashcardsPage {
     });
     
     const count = await flashcardElements.count();
-    console.log(`Found ${count} flashcards`);
-    
     const items: FlashcardItemPage[] = [];
     
     // Używamy Promise.all dla lepszej wydajności

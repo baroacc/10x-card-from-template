@@ -49,7 +49,6 @@ export class SearchAndPaginationPage {
         response.url().includes('/api/flashcards') && 
         response.url().includes(`search=${encodeURIComponent(term)}`)
     );
-    console.log("Search completed");
   }
 
   /**
