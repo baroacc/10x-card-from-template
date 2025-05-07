@@ -1,13 +1,13 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { CreateFlashcardDto, FlashcardDTO, FlashcardUpdateDTO } from '../types';
-import type { Database } from '../db/database.types';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { CreateFlashcardDto, FlashcardDTO, FlashcardUpdateDTO } from "../types";
+import type { Database } from "../db/database.types";
 
 export interface GetFlashcardsParams {
   page: number;
   limit: number;
   search?: string;
   sortBy?: string;
-  order?: 'asc' | 'desc';
+  order?: "asc" | "desc";
 }
 
 export class FlashcardService {
@@ -22,18 +22,18 @@ export class FlashcardService {
    */
   async createFlashcards(flashcards: CreateFlashcardDto[], userId: string): Promise<FlashcardDTO[]> {
     const { data, error } = await this.supabase
-      .from('flashcards')
+      .from("flashcards")
       .insert(
-        flashcards.map(flashcard => ({
+        flashcards.map((flashcard) => ({
           ...flashcard,
-          user_id: userId
+          user_id: userId,
         }))
       )
       .select();
 
     if (error) {
-      console.error('Error creating flashcards:', error);
-      throw new Error('Failed to create flashcards');
+      console.error("Error creating flashcards:", error);
+      throw new Error("Failed to create flashcards");
     }
 
     return data as FlashcardDTO[];
@@ -46,15 +46,15 @@ export class FlashcardService {
    * @returns Promise resolving to object containing flashcards data and total count
    * @throws Error if fetching flashcards fails
    */
-  async getFlashcards(userId: string, params: GetFlashcardsParams): Promise<{ data: FlashcardDTO[], total: number }> {
-    const { page, limit, search, sortBy = 'created_at', order = 'desc' } = params;
+  async getFlashcards(userId: string, params: GetFlashcardsParams): Promise<{ data: FlashcardDTO[]; total: number }> {
+    const { page, limit, search, sortBy = "created_at", order = "desc" } = params;
     const offset = (page - 1) * limit;
 
     let query = this.supabase
-      .from('flashcards')
-      .select('*', { count: 'exact' })
-      .eq('user_id', userId)
-      .eq('status', true);
+      .from("flashcards")
+      .select("*", { count: "exact" })
+      .eq("user_id", userId)
+      .eq("status", true);
 
     // Apply search filter if provided
     if (search) {
@@ -62,7 +62,7 @@ export class FlashcardService {
     }
 
     // Apply sorting
-    query = query.order(sortBy, { ascending: order === 'asc' });
+    query = query.order(sortBy, { ascending: order === "asc" });
 
     // Apply pagination
     query = query.range(offset, offset + limit - 1);
@@ -70,13 +70,13 @@ export class FlashcardService {
     const { data, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching flashcards:', error);
-      throw new Error('Failed to fetch flashcards');
+      console.error("Error fetching flashcards:", error);
+      throw new Error("Failed to fetch flashcards");
     }
 
     return {
       data: data as FlashcardDTO[],
-      total: count ?? 0
+      total: count ?? 0,
     };
   }
 
@@ -91,28 +91,28 @@ export class FlashcardService {
   async updateFlashcard(flashcardId: number, userId: string, updateData: FlashcardUpdateDTO): Promise<FlashcardDTO> {
     // First check if the flashcard exists and belongs to the user
     const { data: existingFlashcard, error: findError } = await this.supabase
-      .from('flashcards')
+      .from("flashcards")
       .select()
-      .eq('id', flashcardId)
-      .eq('user_id', userId)
+      .eq("id", flashcardId)
+      .eq("user_id", userId)
       .single();
 
     if (findError || !existingFlashcard) {
-      throw new Error('Flashcard not found');
+      throw new Error("Flashcard not found");
     }
 
     // Update the flashcard
     const { data, error } = await this.supabase
-      .from('flashcards')
+      .from("flashcards")
       .update(updateData)
-      .eq('id', flashcardId)
-      .eq('user_id', userId)
+      .eq("id", flashcardId)
+      .eq("user_id", userId)
       .select()
       .single();
 
     if (error) {
-      console.error('Error updating flashcard:', error);
-      throw new Error('Failed to update flashcard');
+      console.error("Error updating flashcard:", error);
+      throw new Error("Failed to update flashcard");
     }
 
     return data as FlashcardDTO;
@@ -127,15 +127,15 @@ export class FlashcardService {
    */
   async deleteFlashcard(flashcardId: number, userId: string): Promise<void> {
     const { error } = await this.supabase
-      .from('flashcards')
+      .from("flashcards")
       .update({ status: false })
-      .eq('id', flashcardId)
-      .eq('user_id', userId)
-      .eq('status', true);
+      .eq("id", flashcardId)
+      .eq("user_id", userId)
+      .eq("status", true);
 
     if (error) {
-      console.error('Error deleting flashcard:', error);
-      throw new Error('Failed to delete flashcard');
+      console.error("Error deleting flashcard:", error);
+      throw new Error("Failed to delete flashcard");
     }
   }
 
@@ -148,21 +148,21 @@ export class FlashcardService {
    */
   async getFlashcard(flashcardId: number, userId: string): Promise<FlashcardDTO> {
     const { data, error } = await this.supabase
-      .from('flashcards')
-      .select('id, front, back, source, generation_id, created_at, updated_at, status')
-      .eq('id', flashcardId)
-      .eq('user_id', userId)
+      .from("flashcards")
+      .select("id, front, back, source, generation_id, created_at, updated_at, status")
+      .eq("id", flashcardId)
+      .eq("user_id", userId)
       .single();
 
     if (error) {
-      console.error('Error fetching flashcard:', error);
-      throw new Error('Failed to fetch flashcard');
+      console.error("Error fetching flashcard:", error);
+      throw new Error("Failed to fetch flashcard");
     }
 
     if (!data) {
-      throw new Error('Flashcard not found');
+      throw new Error("Flashcard not found");
     }
 
     return data as FlashcardDTO;
   }
-} 
+}

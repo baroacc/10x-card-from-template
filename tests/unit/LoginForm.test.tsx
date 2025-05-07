@@ -1,48 +1,48 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { LoginForm } from '../../src/components/auth/LoginForm'
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { LoginForm } from "../../src/components/auth/LoginForm";
 
 // Mock fetch globally
-const mockFetch = vi.fn()
-global.fetch = mockFetch
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
 
 // Mock window.location
 const mockLocation = {
-  pathname: '/',
-  search: '',
-  href: 'http://localhost/',
+  pathname: "/",
+  search: "",
+  href: "http://localhost/",
   replaceState: vi.fn(),
-}
+};
 
-Object.defineProperty(window, 'location', {
+Object.defineProperty(window, "location", {
   value: mockLocation,
   writable: true,
-})
+});
 
 // Mock window.history
-Object.defineProperty(window, 'history', {
+Object.defineProperty(window, "history", {
   value: {
     replaceState: vi.fn(),
   },
   writable: true,
-})
+});
 
-describe('LoginForm', () => {
+describe("LoginForm", () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-    mockLocation.search = ''
-    mockLocation.href = 'http://localhost/'
-  })
+    vi.clearAllMocks();
+    mockLocation.search = "";
+    mockLocation.href = "http://localhost/";
+  });
 
-  it('renders the login form with all necessary elements', () => {
-    const { container } = render(<LoginForm />)
-    
-    expect(screen.getByText('Welcome back')).toBeInTheDocument()
-    expect(screen.getByLabelText('Email')).toBeInTheDocument()
-    expect(screen.getByLabelText('Password')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument()
-    
+  it("renders the login form with all necessary elements", () => {
+    const { container } = render(<LoginForm />);
+
+    expect(screen.getByText("Welcome back")).toBeInTheDocument();
+    expect(screen.getByLabelText("Email")).toBeInTheDocument();
+    expect(screen.getByLabelText("Password")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Sign in" })).toBeInTheDocument();
+
     expect(container).toMatchInlineSnapshot(`
       <div>
         <div
@@ -159,84 +159,84 @@ describe('LoginForm', () => {
           </div>
         </div>
       </div>
-    `)
-  })
+    `);
+  });
 
-  it('displays welcome message when URL has registered=true parameter', async () => {
-    mockLocation.search = '?registered=true'
-    
-    render(<LoginForm />)
-    
+  it("displays welcome message when URL has registered=true parameter", async () => {
+    mockLocation.search = "?registered=true";
+
+    render(<LoginForm />);
+
     const welcomeMessage = await screen.findByText(
-      'Your account has been created successfully. Please sign in to continue.'
-    )
-    expect(welcomeMessage).toHaveClass('text-green-500', 'bg-green-50')
-    expect(window.history.replaceState).toHaveBeenCalled()
-  })
+      "Your account has been created successfully. Please sign in to continue."
+    );
+    expect(welcomeMessage).toHaveClass("text-green-500", "bg-green-50");
+    expect(window.history.replaceState).toHaveBeenCalled();
+  });
 
-  it('validates email existence', async () => {
-    const user = userEvent.setup()
-    render(<LoginForm />)
+  it("validates email existence", async () => {
+    const user = userEvent.setup();
+    render(<LoginForm />);
 
-    const emailInput = screen.getByLabelText('Email')
-    const passwordInput = screen.getByLabelText('Password')
-    const submitButton = screen.getByRole('button', { name: 'Sign in' })
+    const emailInput = screen.getByLabelText("Email");
+    const passwordInput = screen.getByLabelText("Password");
+    const submitButton = screen.getByRole("button", { name: "Sign in" });
 
-    await user.type(passwordInput, 'validPassword123')
-    await user.click(submitButton)
+    await user.type(passwordInput, "validPassword123");
+    await user.click(submitButton);
 
-    const emailErrorMessage = await screen.findByText('Please enter a valid email address.')
-    expect(emailErrorMessage).toBeInTheDocument()
+    const emailErrorMessage = await screen.findByText("Please enter a valid email address.");
+    expect(emailErrorMessage).toBeInTheDocument();
 
-    await user.clear(emailInput)
-    await user.type(emailInput, 'valid@email.com')
-    await user.click(submitButton)
+    await user.clear(emailInput);
+    await user.type(emailInput, "valid@email.com");
+    await user.click(submitButton);
 
-    expect(emailErrorMessage).not.toBeInTheDocument()
-  })
+    expect(emailErrorMessage).not.toBeInTheDocument();
+  });
 
-  it('validates password length', async () => {
-    const user = userEvent.setup()
-    render(<LoginForm />)
+  it("validates password length", async () => {
+    const user = userEvent.setup();
+    render(<LoginForm />);
 
-    const emailInput = screen.getByLabelText('Email')
-    const passwordInput = screen.getByLabelText('Password')
-    const submitButton = screen.getByRole('button', { name: 'Sign in' })
+    const emailInput = screen.getByLabelText("Email");
+    const passwordInput = screen.getByLabelText("Password");
+    const submitButton = screen.getByRole("button", { name: "Sign in" });
 
-    await user.type(emailInput, 'valid@email.com')
-    await user.type(passwordInput, 'short')
-    await user.click(submitButton)
+    await user.type(emailInput, "valid@email.com");
+    await user.type(passwordInput, "short");
+    await user.click(submitButton);
 
-    const passwordErrorMessage = await screen.findByText('Password must be at least 8 characters long.')
-    expect(passwordErrorMessage).toBeInTheDocument()
+    const passwordErrorMessage = await screen.findByText("Password must be at least 8 characters long.");
+    expect(passwordErrorMessage).toBeInTheDocument();
 
-    await user.clear(passwordInput)
-    await user.type(passwordInput, 'validPassword123')
-    await user.click(submitButton)
+    await user.clear(passwordInput);
+    await user.type(passwordInput, "validPassword123");
+    await user.click(submitButton);
 
-    expect(passwordErrorMessage).not.toBeInTheDocument()
-  })
+    expect(passwordErrorMessage).not.toBeInTheDocument();
+  });
 
-  it('handles login error', async () => {
-    const user = userEvent.setup()
-    const errorMessage = 'Invalid credentials'
+  it("handles login error", async () => {
+    const user = userEvent.setup();
+    const errorMessage = "Invalid credentials";
     mockFetch.mockResolvedValueOnce({
       ok: false,
       json: () => Promise.resolve({ error: errorMessage }),
-    })
+    });
 
-    render(<LoginForm />)
+    render(<LoginForm />);
 
-    const emailInput = screen.getByLabelText('Email')
-    const passwordInput = screen.getByLabelText('Password')
-    const submitButton = screen.getByRole('button', { name: 'Sign in' })
+    const emailInput = screen.getByLabelText("Email");
+    const passwordInput = screen.getByLabelText("Password");
+    const submitButton = screen.getByRole("button", { name: "Sign in" });
 
-    await user.type(emailInput, 'test@example.com')
-    await user.type(passwordInput, 'password123')
-    await user.click(submitButton)
+    await user.type(emailInput, "test@example.com");
+    await user.type(passwordInput, "password123");
+    await user.click(submitButton);
 
-    const error = await screen.findByText(errorMessage)
-    expect(error).toHaveClass('text-red-500', 'bg-red-50')
-    expect(screen.getByRole('button', { name: 'Sign in' })).toBeEnabled()
-  })
-}) 
+    const error = await screen.findByText(errorMessage);
+    expect(error).toHaveClass("text-red-500", "bg-red-50");
+    expect(screen.getByRole("button", { name: "Sign in" })).toBeEnabled();
+  });
+});

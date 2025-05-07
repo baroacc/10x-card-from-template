@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export interface ServiceConfig {
   apiKey: string;
@@ -16,7 +16,7 @@ export interface ModelConfig {
 
 export interface RequestPayload {
   messages: {
-    role: 'system' | 'user';
+    role: "system" | "user";
     content: string;
   }[];
   model: string;
@@ -29,4 +29,4 @@ export const responseSchema = z.object({
   response: z.string(),
 });
 
-export type ResponseData = z.infer<typeof responseSchema>; 
+export type ResponseData = z.infer<typeof responseSchema>;

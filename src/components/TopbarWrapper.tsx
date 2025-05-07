@@ -1,5 +1,5 @@
-import { Topbar } from './Topbar'
-import { useEffect, useState } from 'react'
+import { Topbar } from "./Topbar";
+import { useEffect, useState } from "react";
 
 interface User {
   name: string;
@@ -19,8 +19,8 @@ export function TopbarWrapper({ initialUser }: TopbarWrapperProps) {
 
   const checkUser = async () => {
     try {
-      const response = await fetch('/api/auth/me');
-      
+      const response = await fetch("/api/auth/me");
+
       if (!response.ok) {
         // Użytkownik nie jest zalogowany lub wystąpił inny błąd
         setUser(null);
@@ -30,12 +30,12 @@ export function TopbarWrapper({ initialUser }: TopbarWrapperProps) {
       const data = await response.json();
       setUser({
         name: data.user.name || data.user.email,
-        email: data.user.email
+        email: data.user.email,
       });
     } catch (err) {
       // Logujemy tylko nieoczekiwane błędy, nie status 401
-      if (err instanceof Error && !err.message.includes('401')) {
-        console.error('Unexpected error fetching user:', err);
+      if (err instanceof Error && !err.message.includes("401")) {
+        console.error("Unexpected error fetching user:", err);
       }
       setUser(null);
     } finally {
@@ -51,25 +51,25 @@ export function TopbarWrapper({ initialUser }: TopbarWrapperProps) {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       });
 
       if (!response.ok) {
         const data = await response.json();
-        console.error('Error during logout:', data.error);
+        console.error("Error during logout:", data.error);
         return;
       }
 
       // Zamiast używać router.push, używamy window.location
-      window.location.href = '/login';
+      window.location.href = "/login";
     } catch (err) {
-      console.error('Unexpected error during logout:', err);
+      console.error("Unexpected error during logout:", err);
     }
-  }
+  };
 
   if (isLoading) {
     return null; // lub możesz zwrócić loader/spinner
@@ -79,5 +79,5 @@ export function TopbarWrapper({ initialUser }: TopbarWrapperProps) {
     return null;
   }
 
-  return <Topbar user={user} onLogout={handleLogout} />
-} 
+  return <Topbar user={user} onLogout={handleLogout} />;
+}

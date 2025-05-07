@@ -1,26 +1,26 @@
-import { type Page, type Locator, expect } from '@playwright/test';
+import { type Page, type Locator, expect } from "@playwright/test";
 
 export class BulkSaveComponent {
   readonly page: Page;
-  
+
   // Container
   readonly bulkSaveContainer: Locator;
-  
+
   // Buttons
   readonly saveAllButton: Locator;
   readonly saveAcceptedButton: Locator;
-  
+
   // Messages
   readonly successMessage: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    
+
     // Initialize all locators using data-testid selectors
-    this.bulkSaveContainer = page.getByTestId('bulk-save-container');
-    this.saveAllButton = page.getByTestId('save-all-button');
-    this.saveAcceptedButton = page.getByTestId('save-accepted-button');
-    this.successMessage = page.getByTestId('success-message');
+    this.bulkSaveContainer = page.getByTestId("bulk-save-container");
+    this.saveAllButton = page.getByTestId("save-all-button");
+    this.saveAcceptedButton = page.getByTestId("save-accepted-button");
+    this.successMessage = page.getByTestId("success-message");
   }
 
   // Actions
@@ -66,4 +66,4 @@ export class BulkSaveComponent {
     const match = text?.match(/\((\d+)\)/);
     return match ? parseInt(match[1]) : 0;
   }
-} 
+}

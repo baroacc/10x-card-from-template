@@ -1,10 +1,10 @@
-import { Skeleton } from './ui/skeleton';
+import { Skeleton } from "./ui/skeleton";
 
 interface SkeletonLoaderProps {
-  'data-testid'?: string;
+  "data-testid"?: string;
 }
 
-export function SkeletonLoader({ 'data-testid': dataTestId }: SkeletonLoaderProps) {
+export function SkeletonLoader({ "data-testid": dataTestId }: SkeletonLoaderProps) {
   return (
     <div className="space-y-4 mt-8" data-testid={dataTestId || "skeleton-loader"}>
       <div className="flex items-center space-x-4">
@@ -29,4 +29,4 @@ export function SkeletonLoader({ 'data-testid': dataTestId }: SkeletonLoaderProp
       ))}
     </div>
   );
-} 
+}

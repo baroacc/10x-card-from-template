@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import type { Locator, Page } from "@playwright/test";
 
 /**
  * Page Object Model for the SearchAndPagination component
@@ -6,7 +6,7 @@ import type { Locator, Page } from '@playwright/test';
  */
 export class SearchAndPaginationPage {
   readonly page: Page;
-  
+
   constructor(page: Page) {
     this.page = page;
   }
@@ -45,9 +45,8 @@ export class SearchAndPaginationPage {
   async search(term: string): Promise<void> {
     await this.getSearchInput().fill(term);
     await this.page.waitForResponse(
-      (response) => 
-        response.url().includes('/api/flashcards') && 
-        response.url().includes(`search=${encodeURIComponent(term)}`)
+      (response) =>
+        response.url().includes("/api/flashcards") && response.url().includes(`search=${encodeURIComponent(term)}`)
     );
   }
 
@@ -87,7 +86,7 @@ export class SearchAndPaginationPage {
     const activePageLocator = this.page.locator('[data-testid^="pagination-page-"][aria-current="page"]');
     const text = await activePageLocator.textContent();
     if (!text) {
-      throw new Error('Could not determine current page number');
+      throw new Error("Could not determine current page number");
     }
     return parseInt(text.trim(), 10);
   }
@@ -97,8 +96,8 @@ export class SearchAndPaginationPage {
    */
   async isNextPageDisabled(): Promise<boolean> {
     const nextButton = this.page.locator('[data-testid="pagination-next"]');
-    const className = await nextButton.getAttribute('class') || '';
-    return className.includes('pointer-events-none');
+    const className = (await nextButton.getAttribute("class")) || "";
+    return className.includes("pointer-events-none");
   }
 
   /**
@@ -106,7 +105,7 @@ export class SearchAndPaginationPage {
    */
   async isPreviousPageDisabled(): Promise<boolean> {
     const prevButton = this.page.locator('[data-testid="pagination-previous"]');
-    const className = await prevButton.getAttribute('class') || '';
-    return className.includes('pointer-events-none');
+    const className = (await prevButton.getAttribute("class")) || "";
+    return className.includes("pointer-events-none");
   }
-} 
+}

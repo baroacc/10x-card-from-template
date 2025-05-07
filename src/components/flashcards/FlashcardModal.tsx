@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -9,26 +9,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
-import type { FlashcardDTO } from '@/types';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import type { FlashcardDTO } from "@/types";
 
 const flashcardFormSchema = z.object({
-  front: z.string()
-    .min(1, 'Front side is required')
-    .max(200, 'Front side cannot exceed 200 characters'),
-  back: z.string()
-    .min(1, 'Back side is required')
-    .max(500, 'Back side cannot exceed 500 characters'),
+  front: z.string().min(1, "Front side is required").max(200, "Front side cannot exceed 200 characters"),
+  back: z.string().min(1, "Back side is required").max(500, "Back side cannot exceed 500 characters"),
 });
 
 type FlashcardFormData = z.infer<typeof flashcardFormSchema>;
@@ -40,17 +29,12 @@ interface FlashcardModalProps {
   flashcard?: FlashcardDTO;
 }
 
-export function FlashcardModal({
-  isOpen,
-  onClose,
-  onSubmit,
-  flashcard,
-}: FlashcardModalProps) {
+export function FlashcardModal({ isOpen, onClose, onSubmit, flashcard }: FlashcardModalProps) {
   const form = useForm<FlashcardFormData>({
     resolver: zodResolver(flashcardFormSchema),
     defaultValues: {
-      front: '',
-      back: '',
+      front: "",
+      back: "",
     },
   });
 
@@ -62,8 +46,8 @@ export function FlashcardModal({
       });
     } else {
       form.reset({
-        front: '',
-        back: '',
+        front: "",
+        back: "",
       });
     }
   }, [flashcard, form]);
@@ -74,7 +58,7 @@ export function FlashcardModal({
       onClose();
       form.reset();
     } catch (error) {
-      // Error handling is done in the parent component
+      console.error(error);
     }
   };
 
@@ -82,13 +66,11 @@ export function FlashcardModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px]" data-testid="flashcard-form-modal">
         <DialogHeader>
-          <DialogTitle>
-            {flashcard ? 'Edit Flashcard' : 'Create New Flashcard'}
-          </DialogTitle>
+          <DialogTitle>{flashcard ? "Edit Flashcard" : "Create New Flashcard"}</DialogTitle>
           <DialogDescription>
             {flashcard
-              ? 'Edit the content of your flashcard. Click save when you\'re done.'
-              : 'Fill in the content for your new flashcard. Click create when you\'re done.'}
+              ? "Edit the content of your flashcard. Click save when you're done."
+              : "Fill in the content for your new flashcard. Click create when you're done."}
           </DialogDescription>
         </DialogHeader>
 
@@ -133,20 +115,11 @@ export function FlashcardModal({
             />
 
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                data-testid="cancel-button"
-              >
+              <Button type="button" variant="outline" onClick={onClose} data-testid="cancel-button">
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                disabled={form.formState.isSubmitting}
-                data-testid="submit-button"
-              >
-                {flashcard ? 'Save Changes' : 'Create Flashcard'}
+              <Button type="submit" disabled={form.formState.isSubmitting} data-testid="submit-button">
+                {flashcard ? "Save Changes" : "Create Flashcard"}
               </Button>
             </DialogFooter>
           </form>
@@ -154,4 +127,4 @@ export function FlashcardModal({
       </DialogContent>
     </Dialog>
   );
-} 
+}

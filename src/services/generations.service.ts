@@ -1,31 +1,37 @@
-import type { Database } from '../db/database.types';
-import type { CreateGenerationResponseDTO, FlashCardProposalDTO, GenerateFlashcardsCommand, GenerationDetailDTO, PaginationDTO } from '../types';
-import type { SupabaseClient } from '@supabase/supabase-js';
-import crypto from 'crypto';
-import { OpenRouterService } from './openrouter.service';
-import { z } from 'zod';
+import type { Database } from "../db/database.types";
+import type {
+  CreateGenerationResponseDTO,
+  FlashCardProposalDTO,
+  GenerateFlashcardsCommand,
+  GenerationDetailDTO,
+  PaginationDTO,
+} from "../types";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import crypto from "crypto";
+import { OpenRouterService } from "./openrouter.service";
+import { z } from "zod";
 
 // Schema for validating OpenRouter response
 const flashcardsResponseSchema = z.object({
-  flashcards: z.array(z.object({
-    front: z.string(),
-    back: z.string()
-  }))
+  flashcards: z.array(
+    z.object({
+      front: z.string(),
+      back: z.string(),
+    })
+  ),
 });
 
 export class GenerationsService {
   private readonly openRouter: OpenRouterService;
 
-  constructor(
-    private readonly supabase: SupabaseClient<Database>
-  ) {
+  constructor(private readonly supabase: SupabaseClient<Database>) {
     if (!import.meta.env.OPENROUTER_API_KEY) {
-      throw new Error('OPENROUTER_API_KEY environment variable is not set');
+      throw new Error("OPENROUTER_API_KEY environment variable is not set");
     }
 
     this.openRouter = new OpenRouterService({
       apiKey: import.meta.env.OPENROUTER_API_KEY,
-      apiEndpoint: 'https://openrouter.ai/api/v1/chat/completions',
+      apiEndpoint: "https://openrouter.ai/api/v1/chat/completions",
     });
 
     // Configure OpenRouter for flashcard generation
@@ -53,21 +59,22 @@ export class GenerationsService {
 
       // Get response from OpenRouter
       const response = await this.openRouter.sendRequest();
-      
+
       // Parse and validate the response
       let parsedResponse;
       try {
         parsedResponse = JSON.parse(response.response);
         parsedResponse = flashcardsResponseSchema.parse(parsedResponse);
       } catch (error) {
-        throw new Error('Failed to parse AI response into valid flashcards format');
+        console.error(error);
+        throw new Error("Failed to parse AI response into valid flashcards format");
       }
 
       // Convert the response to FlashCardProposalDTO format
-      const flashcardsProposals: FlashCardProposalDTO[] = parsedResponse.flashcards.map(card => ({
+      const flashcardsProposals: FlashCardProposalDTO[] = parsedResponse.flashcards.map((card) => ({
         front: card.front,
         back: card.back,
-        source: 'ai-full'
+        source: "ai-full",
       }));
 
       const generationDuration = Date.now() - startTime;
@@ -79,13 +86,13 @@ export class GenerationsService {
         sourceTextLength: command.source_text.length,
         generationDuration,
         generatedCount,
-        aiModel: this.openRouter.getModelConfig().model
+        aiModel: this.openRouter.getModelConfig().model,
       });
 
       return {
         generation_id: generation.id,
         generated_count: generatedCount,
-        flashcards_proposals: flashcardsProposals
+        flashcards_proposals: flashcardsProposals,
       };
     } catch (error) {
       await this.logGenerationError({
@@ -93,7 +100,7 @@ export class GenerationsService {
         sourceTextHash,
         sourceTextLength: command.source_text.length,
         error,
-        aiModel: this.openRouter.getModelConfig().model
+        aiModel: this.openRouter.getModelConfig().model,
       });
       throw error;
     }
@@ -105,7 +112,7 @@ export class GenerationsService {
     sourceTextLength,
     generationDuration,
     generatedCount,
-    aiModel
+    aiModel,
   }: {
     userId: string;
     sourceTextHash: string;
@@ -115,7 +122,7 @@ export class GenerationsService {
     aiModel: string;
   }) {
     const { data: generation, error: generationError } = await this.supabase
-      .from('generations')
+      .from("generations")
       .insert({
         user_id: userId,
         source_text_hash: sourceTextHash,
@@ -124,13 +131,13 @@ export class GenerationsService {
         accepted_edited_count: 0,
         accepted_unedited_count: 0,
         generated_count: generatedCount,
-        generation_duration: generationDuration
+        generation_duration: generationDuration,
       })
       .select()
       .single();
 
     if (generationError) throw generationError;
-    if (!generation) throw new Error('Failed to create generation record');
+    if (!generation) throw new Error("Failed to create generation record");
 
     return generation;
   }
@@ -140,7 +147,7 @@ export class GenerationsService {
     sourceTextHash,
     sourceTextLength,
     error,
-    aiModel
+    aiModel,
   }: {
     userId: string;
     sourceTextHash: string;
@@ -148,47 +155,53 @@ export class GenerationsService {
     error: unknown;
     aiModel: string;
   }) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    const errorCode = error instanceof Error ? error.name : 'UnknownError';
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorCode = error instanceof Error ? error.name : "UnknownError";
 
-    const { error: logError } = await this.supabase
-      .from('generation_error_logs')
-      .insert({
-        user_id: userId,
-        source_text_hash: sourceTextHash,
-        source_text_length: sourceTextLength,
-        ai_model: aiModel,
-        error_code: errorCode,
-        error_message: errorMessage
-      });
+    const { error: logError } = await this.supabase.from("generation_error_logs").insert({
+      user_id: userId,
+      source_text_hash: sourceTextHash,
+      source_text_length: sourceTextLength,
+      ai_model: aiModel,
+      error_code: errorCode,
+      error_message: errorMessage,
+    });
 
     if (logError) {
-      console.error('Failed to log generation error:', logError);
+      console.error("Failed to log generation error:", logError);
     }
   }
 
   private generateHash(text: string): string {
-    return crypto.createHash('md5').update(text).digest('hex');
+    return crypto.createHash("md5").update(text).digest("hex");
   }
 
-  async getGenerations(userId: string, page: number, limit: number): Promise<{ data: GenerationDetailDTO[], pagination: PaginationDTO }> {
+  async getGenerations(
+    userId: string,
+    page: number,
+    limit: number
+  ): Promise<{ data: GenerationDetailDTO[]; pagination: PaginationDTO }> {
     const offset = (page - 1) * limit;
 
     // Get data with count
-    const { data: generations, error, count: total } = await this.supabase
-      .from('generations')
-      .select('*', { count: 'exact' })
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
+    const {
+      data: generations,
+      error,
+      count: total,
+    } = await this.supabase
+      .from("generations")
+      .select("*", { count: "exact" })
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (error) throw error;
-    if (!generations) throw new Error('Failed to fetch generations');
-    if (total === null) throw new Error('Failed to get total count of generations');
+    if (!generations) throw new Error("Failed to fetch generations");
+    if (total === null) throw new Error("Failed to get total count of generations");
 
-    const generationsWithProposals: GenerationDetailDTO[] = generations.map(gen => ({
+    const generationsWithProposals: GenerationDetailDTO[] = generations.map((gen) => ({
       ...gen,
-      flashcards_proposals: []
+      flashcards_proposals: [],
     }));
 
     return {
@@ -196,8 +209,8 @@ export class GenerationsService {
       pagination: {
         page,
         limit,
-        total
-      }
+        total,
+      },
     };
   }
-} 
+}

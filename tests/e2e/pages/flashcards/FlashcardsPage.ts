@@ -1,7 +1,7 @@
-import type { Locator, Page } from '@playwright/test';
-import { FlashcardItemPage } from './FlashcardItemPage';
-import { FlashcardModalPage } from './FlashcardModalPage';
-import { SearchAndPaginationPage } from './SearchAndPaginationPage';
+import type { Locator, Page } from "@playwright/test";
+import { FlashcardItemPage } from "./FlashcardItemPage";
+import { FlashcardModalPage } from "./FlashcardModalPage";
+import { SearchAndPaginationPage } from "./SearchAndPaginationPage";
 
 /**
  * Page Object Model for the FlashcardsPage component
@@ -11,7 +11,7 @@ export class FlashcardsPage {
   readonly page: Page;
   readonly searchAndPagination: SearchAndPaginationPage;
   readonly flashcardModal: FlashcardModalPage;
-  
+
   constructor(page: Page) {
     this.page = page;
     this.searchAndPagination = new SearchAndPaginationPage(page);
@@ -22,7 +22,7 @@ export class FlashcardsPage {
    * Navigate to the flashcards page
    */
   async goto(): Promise<void> {
-    await this.page.goto('/flashcards');
+    await this.page.goto("/flashcards");
   }
 
   /**
@@ -104,14 +104,14 @@ export class FlashcardsPage {
    * @param timeout Optional timeout in milliseconds
    */
   async waitForSpinnerToDisappear(timeout?: number): Promise<void> {
-    await this.getLoadingSpinner().waitFor({ state: 'hidden', timeout });
+    await this.getLoadingSpinner().waitFor({ state: "hidden", timeout });
   }
 
   /**
    * Wait for the page to finish loading
    */
   async waitForLoading(): Promise<void> {
-    await this.page.waitForSelector('[data-testid="loading-spinner"]', { state: 'hidden' });
+    await this.page.waitForSelector('[data-testid="loading-spinner"]', { state: "hidden" });
   }
 
   /**
@@ -120,37 +120,40 @@ export class FlashcardsPage {
   async getAllFlashcardItems(): Promise<FlashcardItemPage[]> {
     // Czekamy na zakończenie ładowania
     await this.waitForLoading();
-    
+
     // Czekamy na pojawienie się kontenera z fiszkami
-    await this.page.waitForSelector('[data-testid="flashcards-list"]', { state: 'visible' });
-    
+    await this.page.waitForSelector('[data-testid="flashcards-list"]', { state: "visible" });
+
     // Lokator dla wszystkich fiszek
     const flashcardElements = this.page.locator('[data-testid^="flashcard-item-"]');
-    
+
     // Czekamy aż wszystkie elementy będą widoczne
-    await flashcardElements.first().waitFor({ state: 'visible' }).catch(() => {
-      // Jeśli nie ma żadnych elementów, zwracamy pustą tablicę
-      return [];
-    });
-    
+    await flashcardElements
+      .first()
+      .waitFor({ state: "visible" })
+      .catch(() => {
+        // Jeśli nie ma żadnych elementów, zwracamy pustą tablicę
+        return [];
+      });
+
     const count = await flashcardElements.count();
     const items: FlashcardItemPage[] = [];
-    
+
     // Używamy Promise.all dla lepszej wydajności
     await Promise.all(
       Array.from({ length: count }, async (_, i) => {
         const element = flashcardElements.nth(i);
         // Sprawdzamy czy element jest widoczny
         if (await element.isVisible()) {
-          const id = await element.getAttribute('data-testid');
+          const id = await element.getAttribute("data-testid");
           if (id) {
-            const idNumber = parseInt(id.replace('flashcard-item-', ''), 10);
+            const idNumber = parseInt(id.replace("flashcard-item-", ""), 10);
             items.push(new FlashcardItemPage(this.page, idNumber));
           }
         }
       })
     );
-    
+
     return items;
   }
 
@@ -183,4 +186,4 @@ export class FlashcardsPage {
     await this.searchAndPagination.goToPage(pageNumber);
     await this.waitForLoading();
   }
-} 
+}

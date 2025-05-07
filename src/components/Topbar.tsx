@@ -1,7 +1,6 @@
-"use client"
+"use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,16 +8,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/dropdown-menu";
 
 interface TopbarProps {
   user: {
-    name: string
-    email: string
-    avatarUrl?: string
-  }
-  onLogout: () => void
+    name: string;
+    email: string;
+    avatarUrl?: string;
+  };
+  onLogout: () => void;
 }
 
 export function Topbar({ user, onLogout }: TopbarProps) {
@@ -26,20 +24,20 @@ export function Topbar({ user, onLogout }: TopbarProps) {
     .split(" ")
     .map((n) => n[0])
     .join("")
-    .toUpperCase()
+    .toUpperCase();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-black" data-testid="topbar">
       <div className="flex h-14 items-center justify-end pr-[50px]">
         <nav className="flex items-center gap-6">
-          <a 
+          <a
             href="/generate"
             className="font-medium text-white/70 hover:text-white transition-colors"
             data-testid="generate-link"
           >
             Generowanie
           </a>
-          <a 
+          <a
             href="/flashcard"
             className="font-medium text-white/70 hover:text-white transition-colors"
             data-testid="flashcards-link"
@@ -59,7 +57,9 @@ export function Topbar({ user, onLogout }: TopbarProps) {
             <DropdownMenuContent className="w-56" align="end" forceMount data-testid="user-menu-content">
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none" data-testid="user-name">{user.name}</p>
+                  <p className="text-sm font-medium leading-none" data-testid="user-name">
+                    {user.name}
+                  </p>
                   <p className="text-xs leading-none text-muted-foreground" data-testid="user-email">
                     {user.email}
                   </p>
@@ -79,5 +79,5 @@ export function Topbar({ user, onLogout }: TopbarProps) {
         </nav>
       </div>
     </header>
-  )
-} 
+  );
+}

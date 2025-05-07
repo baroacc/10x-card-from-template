@@ -1,5 +1,5 @@
-import type { APIRoute } from 'astro';
-import { createSupabaseServerClient } from '../../../db/supabase.client';
+import type { APIRoute } from "astro";
+import { createSupabaseServerClient } from "../../../db/supabase.client";
 
 export const prerender = false;
 
@@ -15,20 +15,12 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     });
 
     if (error) {
-      return new Response(
-        JSON.stringify({ error: error.message }),
-        { status: 400 }
-      );
+      return new Response(JSON.stringify({ error: error.message }), { status: 400 });
     }
 
-    return new Response(
-      JSON.stringify({ user: data.user }),
-      { status: 200 }
-    );
+    return new Response(JSON.stringify({ user: data.user }), { status: 200 });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500 }
-    );
+    console.error(err);
+    return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
   }
-}; 
+};

@@ -1,14 +1,14 @@
-import { test, expect } from '@playwright/test';
-import { GenerationPage } from './pages/GenerationPage';
-import { LoginPage } from './pages/LoginPage';
-import { TopbarPage } from './pages/TopbarPage';
-import { FlashcardsPage } from './pages/flashcards/FlashcardsPage';
-import randomstring from 'randomstring';
-import { FlashcardModalPage } from './pages/flashcards/FlashcardModalPage';
+import { test, expect } from "@playwright/test";
+import { GenerationPage } from "./pages/GenerationPage";
+import { LoginPage } from "./pages/LoginPage";
+import { TopbarPage } from "./pages/TopbarPage";
+import { FlashcardsPage } from "./pages/flashcards/FlashcardsPage";
+import randomstring from "randomstring";
+import { FlashcardModalPage } from "./pages/flashcards/FlashcardModalPage";
 
-test.describe('AI Flashcard Generation', () => {
+test.describe("AI Flashcard Generation", () => {
   let loginPage: LoginPage;
-  
+
   const sampleText = `Jak już wspomniałem początkowo Gumisiów było sześciu. Najstarsza z nich to Bunia, która zarządzała kuchnią i która jako jedyna zna przepis na sok z gummijagód dających gumisiom możliwość wysokich skoków 
   (istoty ludzkie po wypiciu takiej mikstury zostają obarczone na krótki czas nadludzką siłą). 
   Gumiś Zami jest potomkiem jakiegoś maga bowiem zna się z kolei na czarach, z tym że musi nieco więcej potrenować i mieć wiary w siebie bo czary mu niezbyt wychodzą. 
@@ -21,18 +21,17 @@ test.describe('AI Flashcard Generation', () => {
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
     await loginPage.goto();
-    await loginPage.login(process.env.E2E_USERNAME || '', process.env.E2E_PASSWORD || '');
+    await loginPage.login(process.env.E2E_USERNAME || "", process.env.E2E_PASSWORD || "");
     await loginPage.waitForRedirectToGenerate();
   });
 
-  test('Login -> Generate -> Save all -> Flashcards -> Search -> Edit -> Logout', async ({ page }) => {
-    
+  test("Login -> Generate -> Save all -> Flashcards -> Search -> Edit -> Logout", async ({ page }) => {
     const generationPage = new GenerationPage(page);
     const topbarPage = new TopbarPage(page);
     const flashcardsPage = new FlashcardsPage(page);
     const flashcardModal = new FlashcardModalPage(page);
- 
-    await expect(page).toHaveURL('/generate');
+
+    await expect(page).toHaveURL("/generate");
     await generationPage.enterText(sampleText);
     expect(await generationPage.isGenerateButtonEnabled()).toBeTruthy();
 
@@ -40,26 +39,26 @@ test.describe('AI Flashcard Generation', () => {
     await generationPage.saveAllFlashcards();
 
     await topbarPage.navigateToFlashcards();
-    
+
     await flashcardsPage.waitForSpinnerToDisappear(5000);
     await flashcardsPage.searchFlashcards("Gumiś");
 
     const flashcards = await flashcardsPage.getAllFlashcardItems();
     expect(flashcards.length).toBeGreaterThan(0);
-    
+
     const firstFlashcard = flashcards[0];
     await firstFlashcard.clickEdit();
-    
+
     const randomString = randomstring.generate(10);
     let front = await flashcardModal.getFrontInput().inputValue();
     front = front + randomString;
-    let back = await flashcardModal.getBackInput().inputValue();
-    
+    const back = await flashcardModal.getBackInput().inputValue();
+
     await flashcardModal.editFlashcard(front, back);
-    
+
     await flashcardsPage.clearSearch();
     await flashcardsPage.searchFlashcards(randomString);
-    
+
     const editedFlashcards = await flashcardsPage.getAllFlashcardItems();
     expect(editedFlashcards.length).toEqual(1);
 

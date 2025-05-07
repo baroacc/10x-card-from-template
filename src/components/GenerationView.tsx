@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
-import type { FlashcardProposalViewModel } from '../types';
-import { useGenerations } from '../hooks/useGenerations';
-import { TextAreaInput } from './TextAreaInput';
-import { FlashcardsList } from './FlashcardsList';
-import { BulkSaveButton } from './BulkSaveButton';
-import { SkeletonLoader } from './SkeletonLoader';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { useState, useEffect } from "react";
+import type { FlashcardProposalViewModel } from "../types";
+import { useGenerations } from "../hooks/useGenerations";
+import { TextAreaInput } from "./TextAreaInput";
+import { FlashcardsList } from "./FlashcardsList";
+import { BulkSaveButton } from "./BulkSaveButton";
+import { SkeletonLoader } from "./SkeletonLoader";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 export function GenerationView() {
-  const [textInput, setTextInput] = useState('');
+  const [textInput, setTextInput] = useState("");
   const [proposals, setProposals] = useState<FlashcardProposalViewModel[]>([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const { isLoading, isSaving, error, generateFlashcards, saveFlashcards } = useGenerations();
@@ -29,15 +29,11 @@ export function GenerationView() {
   };
 
   const handleAccept = (index: number) => {
-    setProposals(proposals.map((proposal, i) => 
-      i === index ? { ...proposal, accepted: true } : proposal
-    ));
+    setProposals(proposals.map((proposal, i) => (i === index ? { ...proposal, accepted: true } : proposal)));
   };
 
   const handleEdit = (index: number, front: string, back: string) => {
-    setProposals(proposals.map((proposal, i) => 
-      i === index ? { ...proposal, front, back, edited: true } : proposal
-    ));
+    setProposals(proposals.map((proposal, i) => (i === index ? { ...proposal, front, back, edited: true } : proposal)));
   };
 
   const handleReject = (index: number) => {
@@ -49,18 +45,18 @@ export function GenerationView() {
     if (success) {
       setProposals([]);
       setShowSuccess(true);
-      setTextInput('');
+      setTextInput("");
     }
   };
 
   const handleSaveAccepted = async () => {
-    const acceptedProposals = proposals.filter(p => p.accepted);
+    const acceptedProposals = proposals.filter((p) => p.accepted);
     const success = await saveFlashcards(acceptedProposals);
     if (success) {
-      setProposals(proposals.filter(p => !p.accepted));
+      setProposals(proposals.filter((p) => !p.accepted));
       setShowSuccess(true);
       if (proposals.length === acceptedProposals.length) {
-        setTextInput('');
+        setTextInput("");
       }
     }
   };
@@ -72,18 +68,14 @@ export function GenerationView() {
           <CardTitle>Generate Flashcards</CardTitle>
         </CardHeader>
         <CardContent>
-          <TextAreaInput 
-            value={textInput}
-            onChange={setTextInput}
-            data-testid="source-text-input"
-          />
+          <TextAreaInput value={textInput} onChange={setTextInput} data-testid="source-text-input" />
           <div className="mt-4">
-            <Button 
+            <Button
               onClick={handleGenerate}
               disabled={isLoading || textInput.length < 1000 || textInput.length > 10000}
               data-testid="generate-flashcards-button"
             >
-              {isLoading ? 'Generating...' : 'Generate Flashcards'}
+              {isLoading ? "Generating..." : "Generate Flashcards"}
             </Button>
           </div>
           {error && (
@@ -120,4 +112,4 @@ export function GenerationView() {
       </Card>
     </div>
   );
-} 
+}

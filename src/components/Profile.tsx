@@ -2,7 +2,15 @@ import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -24,9 +32,9 @@ export function Profile() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('/api/auth/me');
+        const response = await fetch("/api/auth/me");
         if (!response.ok) {
-          throw new Error('Failed to fetch user data');
+          throw new Error("Failed to fetch user data");
         }
         const data = await response.json();
         setUser({
@@ -34,11 +42,11 @@ export function Profile() {
           created_at: data.user.created_at,
           user_metadata: {
             avatar_url: data.user.user_metadata?.avatar_url || null,
-            name: data.user.user_metadata?.name || null
-          }
+            name: data.user.user_metadata?.name || null,
+          },
         });
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
       } finally {
         setIsLoading(false);
       }
@@ -50,22 +58,22 @@ export function Profile() {
   const handleDeactivateAccount = async () => {
     try {
       setIsDeactivating(true);
-      const response = await fetch('/api/auth/deactivate', {
-        method: 'POST',
+      const response = await fetch("/api/auth/deactivate", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Wystąpił błąd podczas blokowania konta');
+        throw new Error(data.error || "Wystąpił błąd podczas blokowania konta");
       }
 
-      window.location.href = '/login';
+      window.location.href = "/login";
     } catch (error) {
-      console.error('Error deactivating account:', error);
-      alert(error instanceof Error ? error.message : 'Wystąpił błąd podczas blokowania konta');
+      console.error("Error deactivating account:", error);
+      alert(error instanceof Error ? error.message : "Wystąpił błąd podczas blokowania konta");
     } finally {
       setIsDeactivating(false);
       setDialogOpen(false);
@@ -134,22 +142,28 @@ export function Profile() {
           <div className="space-y-6">
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Email</h3>
-              <p className="text-base" data-testid="user-email">{user.email}</p>
+              <p className="text-base" data-testid="user-email">
+                {user.email}
+              </p>
             </div>
             <Separator />
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">Data dołączenia</h3>
-              <p className="text-base" data-testid="join-date">{joinDate}</p>
+              <p className="text-base" data-testid="join-date">
+                {joinDate}
+              </p>
             </div>
             <Separator />
             <div className="flex flex-col space-y-2">
               <Button variant="outline" asChild data-testid="change-password-button">
                 <a href="/auth/reset-password">Zmień hasło</a>
               </Button>
-              
+
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="destructive" data-testid="deactivate-account-button">Zablokuj konto</Button>
+                  <Button variant="destructive" data-testid="deactivate-account-button">
+                    Zablokuj konto
+                  </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
@@ -159,21 +173,21 @@ export function Profile() {
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => setDialogOpen(false)}
                       disabled={isDeactivating}
                       data-testid="cancel-deactivation-button"
                     >
                       Anuluj
                     </Button>
-                    <Button 
-                      variant="destructive" 
+                    <Button
+                      variant="destructive"
                       onClick={handleDeactivateAccount}
                       disabled={isDeactivating}
                       data-testid="confirm-deactivation-button"
                     >
-                      {isDeactivating ? 'Blokowanie...' : 'Zablokuj konto'}
+                      {isDeactivating ? "Blokowanie..." : "Zablokuj konto"}
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -184,4 +198,4 @@ export function Profile() {
       </Card>
     </div>
   );
-} 
+}

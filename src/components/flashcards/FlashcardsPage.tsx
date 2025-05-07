@@ -1,11 +1,18 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
-import type { FlashcardDTO, FlashcardListResponseDTO, GetFlashcardsParams, CreateFlashcardDto, FlashcardUpdateDTO, FlashcardSource } from '@/types';
-import { FlashcardItem } from './FlashcardItem';
-import { SearchAndPagination } from './SearchAndPagination';
-import { FlashcardModal } from './FlashcardModal';
-import { Loader2 } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import type {
+  FlashcardDTO,
+  FlashcardListResponseDTO,
+  GetFlashcardsParams,
+  CreateFlashcardDto,
+  FlashcardUpdateDTO,
+  FlashcardSource,
+} from "@/types";
+import { FlashcardItem } from "./FlashcardItem";
+import { SearchAndPagination } from "./SearchAndPagination";
+import { FlashcardModal } from "./FlashcardModal";
+import { Loader2 } from "lucide-react";
 
 export function FlashcardsPage() {
   const [flashcards, setFlashcards] = useState<FlashcardDTO[]>([]);
@@ -14,15 +21,15 @@ export function FlashcardsPage() {
   const [searchParams, setSearchParams] = useState<GetFlashcardsParams>({
     page: 1,
     limit: 10,
-    sortBy: 'created_at',
-    order: 'desc'
+    sortBy: "created_at",
+    order: "desc",
   });
   const [total, setTotal] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFlashcard, setSelectedFlashcard] = useState<FlashcardDTO | undefined>(undefined);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const fetchFlashcards = async () => {
+  const fetchFlashcards = useCallback(async () => {
     // Anuluj poprzednie zapytanie jeśli istnieje
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -34,37 +41,37 @@ export function FlashcardsPage() {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const queryParams = new URLSearchParams();
       Object.entries(searchParams).forEach(([key, value]) => {
         if (value) queryParams.append(key, value.toString());
       });
-      
+
       const response = await fetch(`/api/flashcards?${queryParams}`, {
-        signal: abortControllerRef.current.signal
+        signal: abortControllerRef.current.signal,
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch flashcards');
+        throw new Error("Failed to fetch flashcards");
       }
-      
+
       const data: FlashcardListResponseDTO = await response.json();
       setFlashcards(data.data);
       setTotal(data.pagination.total);
       setError(null);
     } catch (err) {
       // Ignoruj błędy anulowania zapytania
-      if (err instanceof Error && err.name === 'AbortError') {
+      if (err instanceof Error && err.name === "AbortError") {
         return;
       }
-      setError(err instanceof Error ? err.message : 'An error occurred');
-      toast.error('Failed to load flashcards. Please try again.');
+      setError(err instanceof Error ? err.message : "An error occurred");
+      toast.error("Failed to load flashcards. Please try again.");
     } finally {
       setIsLoading(false);
       // Wyczyść referencję do kontrolera
       abortControllerRef.current = null;
     }
-  };
+  }, [searchParams]);
 
   // Efekt do czyszczenia przy odmontowaniu
   useEffect(() => {
@@ -78,20 +85,27 @@ export function FlashcardsPage() {
   // Efekt do pobierania danych
   useEffect(() => {
     fetchFlashcards();
-  }, [searchParams.page, searchParams.limit, searchParams.sortBy, searchParams.order, searchParams.search]);
+  }, [
+    searchParams.page,
+    searchParams.limit,
+    searchParams.sortBy,
+    searchParams.order,
+    searchParams.search,
+    fetchFlashcards,
+  ]);
 
   const handleSearch = useCallback((searchTerm: string) => {
-    setSearchParams(prev => ({
+    setSearchParams((prev) => ({
       ...prev,
       page: 1,
-      search: searchTerm || undefined
+      search: searchTerm || undefined,
     }));
   }, []);
 
   const handlePageChange = (page: number) => {
-    setSearchParams(prev => ({
+    setSearchParams((prev) => ({
       ...prev,
-      page
+      page,
     }));
   };
 
@@ -108,17 +122,18 @@ export function FlashcardsPage() {
   const handleDelete = async (id: number) => {
     try {
       const response = await fetch(`/api/flashcards/${id}`, {
-        method: 'DELETE'
+        method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete flashcard');
+        throw new Error("Failed to delete flashcard");
       }
 
-      toast.success('Flashcard deleted successfully');
+      toast.success("Flashcard deleted successfully");
       await fetchFlashcards();
     } catch (err) {
-      toast.error('Failed to delete flashcard. Please try again.');
+      toast.error("Failed to delete flashcard. Please try again.");
+      console.error(err);
     }
   };
 
@@ -128,42 +143,42 @@ export function FlashcardsPage() {
         // Edit existing flashcard
         const updateData: FlashcardUpdateDTO = {
           ...data,
-          source: selectedFlashcard.source === 'ai-full' ? 'ai-edited' : selectedFlashcard.source as FlashcardSource
+          source: selectedFlashcard.source === "ai-full" ? "ai-edited" : (selectedFlashcard.source as FlashcardSource),
         };
 
         const response = await fetch(`/api/flashcards/${selectedFlashcard.id}`, {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(updateData),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to update flashcard');
+          throw new Error("Failed to update flashcard");
         }
 
-        toast.success('Flashcard updated successfully');
+        toast.success("Flashcard updated successfully");
       } else {
         // Create new flashcard
         const createData: CreateFlashcardDto = {
           ...data,
-          source: 'manual' as FlashcardSource
+          source: "manual" as FlashcardSource,
         };
 
-        const response = await fetch('/api/flashcards', {
-          method: 'POST',
+        const response = await fetch("/api/flashcards", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ flashcards: [createData] }),
         });
 
         if (!response.ok) {
-          throw new Error('Failed to create flashcard');
+          throw new Error("Failed to create flashcard");
         }
 
-        toast.success('Flashcard created successfully');
+        toast.success("Flashcard created successfully");
       }
 
       await fetchFlashcards();
@@ -171,8 +186,8 @@ export function FlashcardsPage() {
     } catch (err) {
       toast.error(
         selectedFlashcard
-          ? 'Failed to update flashcard. Please try again.'
-          : 'Failed to create flashcard. Please try again.'
+          ? "Failed to update flashcard. Please try again."
+          : "Failed to create flashcard. Please try again."
       );
       throw err;
     }
@@ -206,7 +221,7 @@ export function FlashcardsPage() {
         </div>
       ) : (
         <div className="grid gap-4" data-testid="flashcards-list">
-          {flashcards.map(flashcard => (
+          {flashcards.map((flashcard) => (
             <FlashcardItem
               key={flashcard.id}
               flashcard={flashcard}
@@ -227,4 +242,4 @@ export function FlashcardsPage() {
       />
     </div>
   );
-} 
+}

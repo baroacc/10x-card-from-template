@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
+import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
 import {
   Pagination,
   PaginationContent,
@@ -8,8 +8,8 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@/components/ui/pagination';
-import { useDebounce } from '@/hooks/useDebounce';
+} from "@/components/ui/pagination";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface SearchAndPaginationProps {
   total: number;
@@ -26,14 +26,14 @@ export function SearchAndPagination({
   onSearch,
   onPageChange,
 }: SearchAndPaginationProps) {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   useEffect(() => {
     if (debouncedSearchTerm !== undefined) {
       onSearch(debouncedSearchTerm);
     }
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, onSearch]);
 
   const totalPages = Math.ceil(total / pageSize);
 
@@ -41,7 +41,7 @@ export function SearchAndPagination({
     const pages = [];
     const maxVisiblePages = 5;
     let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
     if (endPage - startPage + 1 < maxVisiblePages) {
       startPage = Math.max(1, endPage - maxVisiblePages + 1);
@@ -69,10 +69,7 @@ export function SearchAndPagination({
       );
       pages.unshift(
         <PaginationItem key={1}>
-          <PaginationLink 
-            onClick={() => onPageChange(1)}
-            data-testid="pagination-page-1"
-          >
+          <PaginationLink onClick={() => onPageChange(1)} data-testid="pagination-page-1">
             1
           </PaginationLink>
         </PaginationItem>
@@ -87,10 +84,7 @@ export function SearchAndPagination({
       );
       pages.push(
         <PaginationItem key={totalPages}>
-          <PaginationLink 
-            onClick={() => onPageChange(totalPages)}
-            data-testid={`pagination-page-${totalPages}`}
-          >
+          <PaginationLink onClick={() => onPageChange(totalPages)} data-testid={`pagination-page-${totalPages}`}>
             {totalPages}
           </PaginationLink>
         </PaginationItem>
@@ -116,7 +110,7 @@ export function SearchAndPagination({
             <PaginationItem>
               <PaginationPrevious
                 onClick={() => onPageChange(currentPage - 1)}
-                className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                 data-testid="pagination-previous"
               />
             </PaginationItem>
@@ -124,7 +118,7 @@ export function SearchAndPagination({
             <PaginationItem>
               <PaginationNext
                 onClick={() => onPageChange(currentPage + 1)}
-                className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
                 data-testid="pagination-next"
               />
             </PaginationItem>
@@ -133,4 +127,4 @@ export function SearchAndPagination({
       )}
     </div>
   );
-} 
+}

@@ -1,5 +1,5 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import {
   AlertDialog as AlertDialogRoot,
   AlertDialogAction,
@@ -10,23 +10,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Pencil, Trash2 } from 'lucide-react';
-import type { FlashcardDTO } from '@/types';
+} from "@/components/ui/alert-dialog";
+import { Pencil, Trash2 } from "lucide-react";
+import type { FlashcardDTO } from "@/types";
 
 interface FlashcardItemProps {
   flashcard: FlashcardDTO;
   onEdit: (flashcard: FlashcardDTO) => void;
   onDelete: (id: number) => void;
-  'data-testid'?: string;
+  "data-testid"?: string;
 }
 
-export function FlashcardItem({ flashcard, onEdit, onDelete, 'data-testid': dataTestId }: FlashcardItemProps) {
+export function FlashcardItem({ flashcard, onEdit, onDelete, "data-testid": dataTestId }: FlashcardItemProps) {
   const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -37,8 +37,7 @@ export function FlashcardItem({ flashcard, onEdit, onDelete, 'data-testid': data
           <div className="flex-1">
             <p className="text-sm text-muted-foreground" data-testid="flashcard-date">
               Created: {formatDate(flashcard.created_at)}
-              {flashcard.updated_at !== flashcard.created_at && 
-                ` • Updated: ${formatDate(flashcard.updated_at)}`}
+              {flashcard.updated_at !== flashcard.created_at && ` • Updated: ${formatDate(flashcard.updated_at)}`}
             </p>
           </div>
           <div className="flex gap-2">
@@ -89,11 +88,15 @@ export function FlashcardItem({ flashcard, onEdit, onDelete, 'data-testid': data
       <CardContent className="grid gap-4">
         <div>
           <h3 className="text-sm font-semibold text-muted-foreground mb-1">Front</h3>
-          <p className="text-base" data-testid="flashcard-front">{flashcard.front}</p>
+          <p className="text-base" data-testid="flashcard-front">
+            {flashcard.front}
+          </p>
         </div>
         <div>
           <h3 className="text-sm font-semibold text-muted-foreground mb-1">Back</h3>
-          <p className="text-base" data-testid="flashcard-back">{flashcard.back}</p>
+          <p className="text-base" data-testid="flashcard-back">
+            {flashcard.back}
+          </p>
         </div>
       </CardContent>
       <CardFooter>
@@ -104,4 +107,4 @@ export function FlashcardItem({ flashcard, onEdit, onDelete, 'data-testid': data
       </CardFooter>
     </Card>
   );
-} 
+}

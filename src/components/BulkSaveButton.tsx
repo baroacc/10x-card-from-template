@@ -1,16 +1,22 @@
-import type { FlashcardProposalViewModel } from '../types';
-import { Button } from './ui/button';
+import type { FlashcardProposalViewModel } from "../types";
+import { Button } from "./ui/button";
 
 interface BulkSaveButtonProps {
   proposals: FlashcardProposalViewModel[];
   onSaveAll: () => void;
   onSaveAccepted: () => void;
   isSaving: boolean;
-  'data-testid'?: string;
+  "data-testid"?: string;
 }
 
-export function BulkSaveButton({ proposals, onSaveAll, onSaveAccepted, isSaving, 'data-testid': dataTestId }: BulkSaveButtonProps) {
-  const acceptedCount = proposals.filter(p => p.accepted).length;
+export function BulkSaveButton({
+  proposals,
+  onSaveAll,
+  onSaveAccepted,
+  isSaving,
+  "data-testid": dataTestId,
+}: BulkSaveButtonProps) {
+  const acceptedCount = proposals.filter((p) => p.accepted).length;
   const hasProposals = proposals.length > 0;
   const hasAccepted = acceptedCount > 0;
 
@@ -27,7 +33,7 @@ export function BulkSaveButton({ proposals, onSaveAll, onSaveAccepted, isSaving,
           disabled={isSaving || !hasProposals}
           data-testid="save-all-button"
         >
-          {isSaving ? 'Saving...' : `Save All (${proposals.length})`}
+          {isSaving ? "Saving..." : `Save All (${proposals.length})`}
         </Button>
         <Button
           onClick={onSaveAccepted}
@@ -35,9 +41,9 @@ export function BulkSaveButton({ proposals, onSaveAll, onSaveAccepted, isSaving,
           className="bg-green-600 hover:bg-green-700"
           data-testid="save-accepted-button"
         >
-          {isSaving ? 'Saving...' : `Save Accepted (${acceptedCount})`}
+          {isSaving ? "Saving..." : `Save Accepted (${acceptedCount})`}
         </Button>
       </div>
     </div>
   );
-} 
+}

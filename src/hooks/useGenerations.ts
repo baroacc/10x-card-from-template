@@ -1,5 +1,10 @@
-import { useState } from 'react';
-import type { CreateFlashcardsCommand, CreateGenerationResponseDTO, FlashcardProposalViewModel, GenerateFlashcardsCommand } from '../types';
+import { useState } from "react";
+import type {
+  CreateFlashcardsCommand,
+  CreateGenerationResponseDTO,
+  FlashcardProposalViewModel,
+  GenerateFlashcardsCommand,
+} from "../types";
 
 export function useGenerations() {
   const [isLoading, setIsLoading] = useState(false);
@@ -9,7 +14,7 @@ export function useGenerations() {
 
   const generateFlashcards = async (text: string) => {
     if (text.length < 1000 || text.length > 10000) {
-      setError('Text must be between 1000 and 10000 characters');
+      setError("Text must be between 1000 and 10000 characters");
       return null;
     }
 
@@ -18,30 +23,30 @@ export function useGenerations() {
 
     try {
       const command: GenerateFlashcardsCommand = {
-        source_text: text
+        source_text: text,
       };
 
-      const response = await fetch('/api/generations', {
-        method: 'POST',
+      const response = await fetch("/api/generations", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(command),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate flashcards');
+        throw new Error("Failed to generate flashcards");
       }
 
       const data: CreateGenerationResponseDTO = await response.json();
       setGenerationId(data.generation_id);
-      return data.flashcards_proposals.map(proposal => ({
+      return data.flashcards_proposals.map((proposal) => ({
         ...proposal,
         accepted: false,
-        edited: false
+        edited: false,
       }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      setError(err instanceof Error ? err.message : "An unexpected error occurred");
       return null;
     } finally {
       setIsLoading(false);
@@ -54,29 +59,29 @@ export function useGenerations() {
 
     try {
       const command: CreateFlashcardsCommand = {
-        flashcards: flashcardsToSave.map(proposal => ({
+        flashcards: flashcardsToSave.map((proposal) => ({
           front: proposal.front,
           back: proposal.back,
-          source: proposal.edited ? 'ai-edited' : 'ai-full',
-          generation_id: generationId ?? undefined
-        }))
+          source: proposal.edited ? "ai-edited" : "ai-full",
+          generation_id: generationId ?? undefined,
+        })),
       };
 
-      const response = await fetch('/api/flashcards', {
-        method: 'POST',
+      const response = await fetch("/api/flashcards", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(command),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save flashcards');
+        throw new Error("Failed to save flashcards");
       }
 
       return true;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred while saving');
+      setError(err instanceof Error ? err.message : "An unexpected error occurred while saving");
       return false;
     } finally {
       setIsSaving(false);
@@ -90,4 +95,4 @@ export function useGenerations() {
     generateFlashcards,
     saveFlashcards,
   };
-} 
+}

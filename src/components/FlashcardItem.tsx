@@ -1,20 +1,20 @@
-import { useState } from 'react';
-import type { FlashcardProposalViewModel } from '../types';
-import { Button } from './ui/button';
-import { Card, CardContent, CardFooter } from './ui/card';
-import { Label } from './ui/label';
-import { Textarea } from './ui/textarea';
-import { Badge } from './ui/badge';
+import { useState } from "react";
+import type { FlashcardProposalViewModel } from "../types";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardFooter } from "./ui/card";
+import { Label } from "./ui/label";
+import { Textarea } from "./ui/textarea";
+import { Badge } from "./ui/badge";
 
 interface FlashcardItemProps {
   proposal: FlashcardProposalViewModel;
   onAccept: () => void;
   onEdit: (front: string, back: string) => void;
   onReject: () => void;
-  'data-testid'?: string;
+  "data-testid"?: string;
 }
 
-export function FlashcardItem({ proposal, onAccept, onEdit, onReject, 'data-testid': dataTestId }: FlashcardItemProps) {
+export function FlashcardItem({ proposal, onAccept, onEdit, onReject, "data-testid": dataTestId }: FlashcardItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [front, setFront] = useState(proposal.front);
   const [back, setBack] = useState(proposal.back);
@@ -22,11 +22,11 @@ export function FlashcardItem({ proposal, onAccept, onEdit, onReject, 'data-test
 
   const handleEdit = () => {
     if (front.length > 200) {
-      setError('Front side must be less than 200 characters');
+      setError("Front side must be less than 200 characters");
       return;
     }
     if (back.length > 500) {
-      setError('Back side must be less than 500 characters');
+      setError("Back side must be less than 500 characters");
       return;
     }
 
@@ -43,7 +43,7 @@ export function FlashcardItem({ proposal, onAccept, onEdit, onReject, 'data-test
   };
 
   return (
-    <Card className={proposal.accepted ? 'border-green-500' : ''} data-testid={dataTestId || "flashcard-item"}>
+    <Card className={proposal.accepted ? "border-green-500" : ""} data-testid={dataTestId || "flashcard-item"}>
       <CardContent className="pt-6">
         {isEditing ? (
           <div className="space-y-4" data-testid="edit-mode-container">
@@ -76,42 +76,71 @@ export function FlashcardItem({ proposal, onAccept, onEdit, onReject, 'data-test
               </div>
             </div>
             {error && (
-              <div className="text-sm text-red-600" data-testid="edit-error-message">{error}</div>
+              <div className="text-sm text-red-600" data-testid="edit-error-message">
+                {error}
+              </div>
             )}
           </div>
         ) : (
           <div className="space-y-4" data-testid="view-mode-container">
             <div>
               <Label>Front</Label>
-              <div className="mt-1 p-2 bg-gray-50 rounded-md" data-testid="front-content">{proposal.front}</div>
+              <div className="mt-1 p-2 bg-gray-50 rounded-md" data-testid="front-content">
+                {proposal.front}
+              </div>
             </div>
             <div>
               <Label>Back</Label>
-              <div className="mt-1 p-2 bg-gray-50 rounded-md" data-testid="back-content">{proposal.back}</div>
+              <div className="mt-1 p-2 bg-gray-50 rounded-md" data-testid="back-content">
+                {proposal.back}
+              </div>
             </div>
           </div>
         )}
       </CardContent>
       <CardFooter className="flex justify-between items-center">
         <div className="flex gap-2">
-          {proposal.edited && <Badge variant="outline" data-testid="edited-badge">Edited</Badge>}
-          {proposal.accepted && <Badge variant="outline" className="border-green-500 text-green-700" data-testid="accepted-badge">Accepted</Badge>}
+          {proposal.edited && (
+            <Badge variant="outline" data-testid="edited-badge">
+              Edited
+            </Badge>
+          )}
+          {proposal.accepted && (
+            <Badge variant="outline" className="border-green-500 text-green-700" data-testid="accepted-badge">
+              Accepted
+            </Badge>
+          )}
         </div>
         <div className="flex gap-2">
           {isEditing ? (
             <>
-              <Button variant="outline" onClick={handleCancelEdit} data-testid="cancel-edit-button">Cancel</Button>
-              <Button onClick={handleEdit} data-testid="save-edit-button">Save</Button>
+              <Button variant="outline" onClick={handleCancelEdit} data-testid="cancel-edit-button">
+                Cancel
+              </Button>
+              <Button onClick={handleEdit} data-testid="save-edit-button">
+                Save
+              </Button>
             </>
           ) : (
             <>
-              <Button variant="outline" onClick={() => setIsEditing(true)} data-testid="edit-button">Edit</Button>
-              <Button variant="outline" onClick={onReject} className="text-red-600 hover:text-red-700" data-testid="reject-button">Reject</Button>
-              <Button onClick={onAccept} className="bg-green-600 hover:bg-green-700" data-testid="accept-button">Accept</Button>
+              <Button variant="outline" onClick={() => setIsEditing(true)} data-testid="edit-button">
+                Edit
+              </Button>
+              <Button
+                variant="outline"
+                onClick={onReject}
+                className="text-red-600 hover:text-red-700"
+                data-testid="reject-button"
+              >
+                Reject
+              </Button>
+              <Button onClick={onAccept} className="bg-green-600 hover:bg-green-700" data-testid="accept-button">
+                Accept
+              </Button>
             </>
           )}
         </div>
       </CardFooter>
     </Card>
   );
-} 
+}

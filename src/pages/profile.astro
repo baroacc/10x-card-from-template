@@ -1,12 +1,12 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { Profile as ProfileComponent } from '../components/Profile';
+import Layout from "../layouts/Layout.astro";
+import { Profile as ProfileComponent } from "../components/Profile";
 
 // Ensure user is authenticated
 const { user } = Astro.locals;
 
 if (!user) {
-  return Astro.redirect('/login');
+  return Astro.redirect("/login");
 }
 
 // Set prerender to false to enable SSR
@@ -15,4 +15,4 @@ export const prerender = false;
 
 <Layout title="Profil użytkownika">
   <ProfileComponent client:only="react" />
-</Layout> 
+</Layout>

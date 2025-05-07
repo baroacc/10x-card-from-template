@@ -1,15 +1,15 @@
-import { Textarea } from './ui/textarea';
-import { Label } from './ui/label';
-import type { ChangeEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { Textarea } from "./ui/textarea";
+import { Label } from "./ui/label";
+import type { ChangeEvent } from "react";
+import { useEffect, useState } from "react";
 
 interface TextAreaInputProps {
   value: string;
   onChange: (value: string) => void;
-  'data-testid'?: string;
+  "data-testid"?: string;
 }
 
-export function TextAreaInput({ value, onChange, 'data-testid': dataTestId }: TextAreaInputProps) {
+export function TextAreaInput({ value, onChange, "data-testid": dataTestId }: TextAreaInputProps) {
   const [localValue, setLocalValue] = useState(value);
 
   // Synchronize local state with props
@@ -31,8 +31,7 @@ export function TextAreaInput({ value, onChange, 'data-testid': dataTestId }: Te
   const charCount = localValue.length;
   const isValid = charCount >= 1000 && charCount <= 10000;
   const showError = charCount > 0 && !isValid;
-  const validationColor = !localValue.length ? 'text-gray-500' : 
-    isValid ? 'text-green-600' : 'text-red-600';
+  const validationColor = !localValue.length ? "text-gray-500" : isValid ? "text-green-600" : "text-red-600";
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setLocalValue(e.target.value);
@@ -59,4 +58,4 @@ export function TextAreaInput({ value, onChange, 'data-testid': dataTestId }: Te
       </div>
     </div>
   );
-} 
+}

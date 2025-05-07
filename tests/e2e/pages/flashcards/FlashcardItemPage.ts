@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import type { Locator, Page } from "@playwright/test";
 
 /**
  * Page Object Model for the FlashcardItem component
@@ -59,16 +59,20 @@ export class FlashcardItemPage {
    * Confirm deletion in the delete confirmation dialog
    */
   async confirmDelete(): Promise<void> {
-    await this.page.locator('[data-testid="delete-confirmation-dialog"]')
-      .locator('[data-testid="confirm-delete-button"]').click();
+    await this.page
+      .locator('[data-testid="delete-confirmation-dialog"]')
+      .locator('[data-testid="confirm-delete-button"]')
+      .click();
   }
 
   /**
    * Cancel deletion in the delete confirmation dialog
    */
   async cancelDelete(): Promise<void> {
-    await this.page.locator('[data-testid="delete-confirmation-dialog"]')
-      .locator('[data-testid="cancel-delete-button"]').click();
+    await this.page
+      .locator('[data-testid="delete-confirmation-dialog"]')
+      .locator('[data-testid="cancel-delete-button"]')
+      .click();
   }
 
   /**
@@ -77,4 +81,4 @@ export class FlashcardItemPage {
   async isDeleteDialogVisible(): Promise<boolean> {
     return await this.page.locator('[data-testid="delete-confirmation-dialog"]').isVisible();
   }
-} 
+}

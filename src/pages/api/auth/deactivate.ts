@@ -1,14 +1,17 @@
-import type { APIRoute } from 'astro';
-import { createSupabaseServerClient } from '../../../db/supabase.client';
+import type { APIRoute } from "astro";
+import { createSupabaseServerClient } from "../../../db/supabase.client";
 
 export const POST: APIRoute = async ({ request, cookies }) => {
   const supabase = createSupabaseServerClient({ cookies, headers: request.headers });
 
   // Get current user
-  const { data: { user }, error: getUserError } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error: getUserError,
+  } = await supabase.auth.getUser();
 
   if (getUserError || !user) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
     });
   }
@@ -26,4 +29,4 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   await supabase.auth.signOut();
 
   return new Response(null, { status: 200 });
-}; 
+};
