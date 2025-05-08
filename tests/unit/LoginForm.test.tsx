@@ -39,6 +39,7 @@ describe("LoginForm", () => {
   });
 
   it("renders the login form with all necessary elements", () => {
+    render(<LoginForm />);
     expect(screen.getByTestId("login-form-container")).toBeInTheDocument();
     expect(screen.getByTestId("login-form")).toBeInTheDocument();
     expect(screen.getByTestId("email-input")).toBeInTheDocument();
