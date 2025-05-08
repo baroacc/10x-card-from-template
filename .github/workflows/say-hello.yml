@@ -9,8 +9,32 @@ on:
 jobs:
   say-hello:
     runs-on: ubuntu-latest
+    environment: integration
+    env:
+      PLAYWRIGHT_TEST_BASE_URL: ${{ vars.PLAYWRIGHT_TEST_BASE_URL }}
+      PLAYWRIGHT_VIEWPORT_WIDTH: ${{ vars.PLAYWRIGHT_VIEWPORT_WIDTH }}
+      PLAYWRIGHT_VIEWPORT_HEIGHT: ${{ vars.PLAYWRIGHT_VIEWPORT_HEIGHT }}
+      PLAYWRIGHT_HEADLESS: ${{ vars.PLAYWRIGHT_HEADLESS }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      E2E_USERNAME_ID: ${{ secrets.E2E_USERNAME_ID }}
+      E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v4
+      - name: Print all environment variables
+        run: |
+          echo "PLAYWRIGHT_TEST_BASE_URL: $PLAYWRIGHT_TEST_BASE_URL"
+          echo "PLAYWRIGHT_VIEWPORT_WIDTH: $PLAYWRIGHT_VIEWPORT_WIDTH"
+          echo "PLAYWRIGHT_VIEWPORT_HEIGHT: $PLAYWRIGHT_VIEWPORT_HEIGHT"
+          echo "PLAYWRIGHT_HEADLESS: $PLAYWRIGHT_HEADLESS"
+          echo "SUPABASE_KEY: $SUPABASE_KEY"
+          echo "SUPABASE_URL: $SUPABASE_URL"
+          echo "OPENROUTER_API_KEY: $OPENROUTER_API_KEY"
+          echo "E2E_USERNAME_ID: $E2E_USERNAME_ID"
+          echo "E2E_USERNAME: $E2E_USERNAME"
+          echo "E2E_PASSWORD: $E2E_PASSWORD"
       - name: Say Hello
         run: echo "Hello from GitHub Actions!"
