@@ -38,7 +38,7 @@ export default defineConfig({
     },
 
     /* Headless mode */
-    headless: process.env.PLAYWRIGHT_HEADLESS === "false",
+    headless: process.env.PLAYWRIGHT_HEADLESS === "true",
   },
 
   /* Configure projects for major browsers */
