@@ -130,3 +130,27 @@ jobs:
             } else {
               console.log('Pomijam dodawanie komentarza - brak numeru PR');
             }
+
+  workflow-summary:
+    name: Workflow Summary
+    needs: [lint, unit-test, e2e-test]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate workflow summary
+        run: |
+          echo "# Build & Test Workflow Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | ------ |" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit Tests | ${{ needs.unit-test.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| E2E Tests | ${{ needs.e2e-test.result }} |" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.lint.result }}" == "success" && "${{ needs.unit-test.result }}" == "success" && "${{ needs.e2e-test.result }}" == "success" ]]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ **Wszystkie testy i sprawdzenia zakończyły się pomyślnie!**" >> $GITHUB_STEP_SUMMARY
+          else 
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **Niektóre testy lub sprawdzenia nie powiodły się.**" >> $GITHUB_STEP_SUMMARY
+          fi
